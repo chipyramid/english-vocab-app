@@ -77,7 +77,7 @@ await assert(!(await page.locator('#learnAnswer').textContent()).includes('中�
 
 // Placement: 12 distinct words, proper page progression
 await page.getByRole('button',{name:'首頁'}).first().click();
-await page.getByRole('button',{name:/開始程度測驗/}).click();
+await page.getByRole('button',{name:/開始單字辨義練習/}).click();
 const placementWords=[];
 for(let i=1;i<=12;i++){
   const q=await page.locator('#placeBox .qtext').textContent();
@@ -90,22 +90,48 @@ for(let i=1;i<=12;i++){
 }
 await assert(placementWords.length===12,'placement did not render 12 word questions');
 await assert(new Set(placementWords).size===12,'placement repeated word: '+placementWords.join(','));
-await assert((await page.locator('#placeBox').textContent()).includes('試用建議'),'placement did not reach result page');
+await assert((await page.locator('#placeBox').textContent()).includes('本次答對'),'placement did not reach result page');
 
 // Second quiz session should not be identical to first
-await page.getByRole('button',{name:/使用這個範圍/}).click();
+await page.locator('#placeBox button').filter({hasText:'高中 4,500 學測核心'}).click();
 await page.getByRole('button',{name:'智慧測驗'}).click();
 await page.getByRole('button',{name:/開始 10 題/}).click();
 const session2=await page.evaluate(()=>qstate.items.map(x=>x.w));
 await assert(session2.length===10 && new Set(session2).size===10,'second session invalid');
 await assert(session2.join('|')!==session.join('|'),'second session identical to first');
 
+// Cumulative frequency ranges; never combined into official corpora.
+for(const n of [3000,5000,7000]){
+ await page.getByRole('button',{name:'首頁'}).first().click();
+ await page.locator(`button[onclick="selectTrack('c${n}')"]`).click();
+ const counts=await page.evaluate(()=>({total:catalogPool().length,ready:pool().length,unique:new Set(pool().map(x=>x.w.toLowerCase())).size}));
+ await assert(counts.total===n&&counts.ready===n&&counts.unique===n,'invalid frequency count '+JSON.stringify(counts));
+ await assert((await page.locator('#trackDesc').textContent()).includes('非官方考試分級'),'frequency range mislabelled');
+}
+await page.getByRole('button',{name:'單字學習',exact:true}).click();
+await page.getByRole('button',{name:'我會了',exact:true}).click();
+await page.locator('.nav[data-nav="records"]').click();
+const search=page.locator('#records .search');
+await search.click();await search.pressSequentially('hear');
+await assert(await search.inputValue()==='hear','record search loses characters');
+await assert(await search.evaluate(el=>el===document.activeElement),'record search loses focus');
+const commonSaved=await page.evaluate(()=>JSON.stringify(db));
+await page.reload({waitUntil:'networkidle'});
+await page.locator('.nav[data-nav="records"]').click();
+await assert((await page.locator('#trackTitle').textContent()).includes('7,000'),'saved C range heading absent');
+await assert(await page.evaluate(()=>JSON.stringify(db))===commonSaved,'C/J/H records lost on reload');
+await page.getByRole('button',{name:'首頁'}).first().click();
+await page.locator(`button[onclick="selectTrack('c3000')"]`).click();
+await assert(await page.evaluate(()=>peekState(COMMON_WORDS[0].w).seen)>0,'C progress not shared across cumulative ranges');
+
 // Asset checks
 const assetStatus=await page.evaluate(async()=>({
   junior:(await fetch('./data/junior_official.js')).status,
   high:(await fetch('./data/high_official.js')).status,
   meanings:(await fetch('./data/meanings.js')).status,
-  sw:(await fetch('./sw.js')).status
+  sw:(await fetch('./sw.js')).status,
+  common:(await fetch('./data/common_frequency.js?v=1')).status,
+  license:(await fetch('./LICENSE-ECDICT.txt')).status
 }));
 await assert(Object.values(assetStatus).every(x=>x===200),'asset fetch failed '+JSON.stringify(assetStatus));
 

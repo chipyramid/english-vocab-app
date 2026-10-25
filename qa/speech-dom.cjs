@@ -1,0 +1,14 @@
+const fs=require('fs'),assert=require('node:assert/strict');
+const {JSDOM}=require(process.env.JSDOM_PATH||'jsdom');
+const root=process.argv[2]||__dirname+'/..',data=process.env.VOCAB_DATA||root+'/data';
+const html=fs.readFileSync(root+'/index.html','utf8').replace(/<script src=[\s\S]*?<\/script>/g,'');
+let utterances=[];
+const dom=new JSDOM(html,{url:'https://example.test',runScripts:'dangerously',beforeParse(w){for(const f of ['junior_official.js','high_official.js','meanings.js','common_frequency.js'])w.eval(fs.readFileSync(data+'/'+f,'utf8'));w.speechSynthesis={getVoices:()=>[],cancel(){},speak:u=>utterances.push(u),addEventListener(){}};w.SpeechSynthesisUtterance=function(text){this.text=text};}});
+const w=dom.window,d=w.document;
+w.selectTrack('j1200');w.switchPane('learn');d.querySelector('#learn .ghost').click();assert.equal(utterances.length,1);assert(utterances[0].text);w.switchPane('quiz');assert(d.querySelector('#speechNotice').classList.contains('hidden'));
+w.eval(`const x=pool()[0];state(x.w).types={en:2};qstate={items:[x],i:0,score:0,lock:false,why:''};renderQuestion()`);
+assert.match(d.querySelector('#quiz').textContent,/點下方按鈕/);assert.equal(utterances.length,1);
+d.querySelector('#quiz [data-word]').click();assert.equal(utterances.length,2);
+const before=w.localStorage.getItem('smart_vocab_progress_v5');d.querySelector('#quiz [onclick="listeningToMeaning()"]').click();assert.equal(w.localStorage.getItem('smart_vocab_progress_v5'),before);assert.equal(d.querySelector('#quiz .option').dataset.t,'en');d.querySelector('#quiz .option').click();assert.equal(w.eval('state(qstate.items[0].w).types.listen||0'),0);
+w.eval(`qstate.lock=false;state(qstate.items[0].w).types={en:2,listen:2};renderQuestion()`);assert(d.querySelector('#spellInput'));d.querySelector('#quiz [data-word]').click();assert.equal(utterances.length,3);w.goHome();assert(d.querySelector('#speechNotice').classList.contains('hidden'));
+dom.window.close();console.log('PASS DOM learn/listen/spell click handlers; no autoplay; no-penalty meaning fallback; no false listening credit; navigation cancel. Mocked audio, not device audibility.');

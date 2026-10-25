@@ -1,7 +1,8 @@
-const CACHE='smart-vocab-v9';
+const CACHE='smart-vocab-v14-ranges';
 const ASSETS=[
   './','./index.html','./manifest.webmanifest','./icon.svg',
-  './data/junior_official.js','./data/high_official.js','./data/meanings.js'
+  './data/junior_official.js','./data/high_official.js','./data/meanings.js?v=2','./data/junior_official.js?v=1','./data/high_official.js?v=1',
+  './data/common_frequency.js?v=1','./README-SOURCES.md','./LICENSE-ECDICT.txt'
 ];
 const OPTIONAL=['https://cdn.jsdelivr.net/npm/opencc-js@1.4.2/dist/umd/full.js'];
 
@@ -19,7 +20,7 @@ self.addEventListener('install',event=>{
 
 self.addEventListener('activate',event=>{
   event.waitUntil(
-    caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))
+    caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('smart-vocab-')&&k!==CACHE).map(k=>caches.delete(k))))
       .then(()=>self.clients.claim())
   );
 });

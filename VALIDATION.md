@@ -1,3 +1,21 @@
+## 2026-10-25 combined release candidate (not yet browser-validated)
+
+Base: `554e7c96507937f2ee6a36c698b3110fab860ab9` (same source tree as `e2da3265a7b968c8e02cbd191b85a02d6e882d9f`). The earlier validation below describes that older version, not proof this candidate has deployed.
+
+- Added a separate ECDICT-derived common-frequency corpus: exactly 3,000 / 5,000 / 7,000 cumulative, case-insensitive unique entries with Traditional Chinese glosses. These are not official examination tiers. No invented examples or expanded official word lists. Existing junior/high/meaning files are byte-for-byte unchanged.
+- Existing junior counts remain 1,273 / 2,066 forms. Existing high counts remain 5,139 / 6,170 rows; the full high corpus has 6,169 case-insensitive unique spellings (`Internet` and `internet` are existing separate rows). Do not add the corpus counts together and call the sum unique words.
+- Uses the existing v5 progress key with additive `C::` records. J/H records stay isolated and preserved; C thresholds share progress without deleting out-of-range records. Legacy v4 imports use actual J/H lists and are not copied into C. Invalid or inaccessible storage is handled without overwriting corrupted source; explicit user-confirmed reset remains available.
+- Restores selected-range headings/counters on reload; record search preserves focus/caret across multiple typed characters.
+- Speech is requested synchronously on an explicit tap, not timer autoplay. Voice loading, paused engines, callbacks, errors, retry and navigation cancellation are handled. Listening can be replaced by a meaning question without a listening score or penalty. Device engine callbacks do not establish audible sound.
+- Replaced the uncalibrated placement recommendation with 12 meaning-practice items: 3 per junior core/extension and high Level 1–3/4–6 group. Displays correct-answer totals and group breakdown, no proficiency or vocabulary-size diagnosis. Listening is not part of this practice.
+- Bumped app cache and precaches exact script query URLs, corpus and license; removes only prior app-owned caches. Actual offline/install/update lifecycle remains unverified.
+
+Local checks: JavaScript syntax and 41 focused groups pass: 16 range/storage/navigation, 10 practice-scoring, 10 speech-controller, 1 speech DOM flow, 4 service-worker model groups. Speech/SW checks use mocks. Tests are in `qa/`; run with Node 22+, `npm install --no-save jsdom@30.1.3`, then the commands in the QA workflow.
+
+The existing Playwright aggregate QA is retained and extended for cumulative ranges, search typing and reload persistence. Only intentional practice copy/result selectors changed. It has not run locally: the supported cloud browser could not reach this executor's local HTTP server (`ERR_CONNECTION_REFUSED`). Candidate-branch CI must run the real browser checks before the exact tested commit is promoted. Actual iPhone/iPad audible playback, iOS touch behavior, full 7,000-gloss professional review, cross-device sync, and genuine PWA/offline lifecycle are not verified. No claim of deployment follows from these local results.
+
+---
+
 # 升學英文智慧單字 App — 驗證紀錄
 
 更新日期：2026-10-25  

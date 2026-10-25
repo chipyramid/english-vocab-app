@@ -1,0 +1,43 @@
+{
+  "entries": 7000,
+  "uniqueCaseInsensitive": 7000,
+  "cumulativeTiers": [
+    3000,
+    5000,
+    7000
+  ],
+  "blankChinese": 0,
+  "examplesIncluded": 0,
+  "originalGlossCorrections": 33,
+  "firstWords": [
+    "the",
+    "be",
+    "and",
+    "of",
+    "a",
+    "in",
+    "to",
+    "have",
+    "it",
+    "that",
+    "for",
+    "you",
+    "he",
+    "with",
+    "on"
+  ],
+  "lastWords": [
+    "raspberry",
+    "presbyterian",
+    "prudent",
+    "spokesperson",
+    "wreckage",
+    "unanimous",
+    "lest",
+    "tavern",
+    "assassin",
+    "cedar"
+  ],
+  "sourceCsvSha256": "d1ecbdf9ee2b920afb6f430ca6b6bb9f559588cf0dff86e04bd255f9390843cc",
+  "jsonSha256": "96f8c1275a9203ff882511e0e105e4fc8bc1c1ed649fbc1cdda893b43a743823"
+}
