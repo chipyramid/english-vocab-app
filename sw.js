@@ -1,5 +1,5 @@
-const CACHE='smart-vocab-v6';
-const ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg'];
+const CACHE='smart-vocab-v7';
+const ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg','./data/junior_official.js','./data/high_official.js'];
 
 self.addEventListener('install',event=>{
   self.skipWaiting();
