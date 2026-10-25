@@ -47,8 +47,8 @@ h1,h2,h3,p{margin-top:0}h2{font-size:22px}.hidden{display:none!important}
 <section id="homeScreen">
   <div class="section">國中</div>
   <div class="grid2">
-    <button class="choice j" onclick="selectTrack('j1200')"><div class="ico">📖</div><b>1,200 基礎</b><span class="sub">國中課綱基本字彙方向</span></button>
-    <button class="choice j" onclick="selectTrack('j2000')"><div class="ico">📊</div><b>2,000 進階／會考閱讀</b><span class="sub">常用參考字彙與會考方向</span></button>
+    <button class="choice j" onclick="selectTrack('j1200')"><div class="ico">📖</div><b>1,200 會考核心</b><span class="sub">課綱基本 1,200 字；會考語言成分核心</span></button>
+    <button class="choice j" onclick="selectTrack('j2000')"><div class="ico">📊</div><b>2,000 擴充字彙</b><span class="sub">加深加廣用；不是會考固定命題範圍</span></button>
   </div>
   <div class="section">高中</div>
   <div class="grid2">
@@ -102,9 +102,9 @@ h1,h2,h3,p{margin-top:0}h2{font-size:22px}.hidden{display:none!important}
 <section id="settingsScreen" class="hidden">
  <div class="card">
    <h2>資料與來源</h2>
-   <div class="source-row"><div><b>國中字彙架構</b><div class="sub">國教院研究資料：國中至少 1,200 字，另列 2,000 常用參考字彙。</div></div><span class="badge">官方依據</span></div>
+   <div class="source-row"><div><b>國中字彙架構</b><div class="sub">課綱要求國中至少學會並能應用基本 1,200 字；2,000 為擴充參考範圍，不等於會考固定命題字彙。</div></div><span class="badge">官方依據</span></div>
    <div class="source-row"><div><b>高中字彙架構</b><div class="sub">大考中心《高中英文參考詞彙表》分 Level 1–6；學測以高中常用約 4,500 字詞為主，Level 1–5 可作參考，仍可能出現更高級詞彙。</div></div><span class="badge">官方依據</span></div>
-   <div class="source-row"><div><b>目前 App 字庫</b><div class="sub">功能測試用樣本字庫；尚未宣稱為完整官方清單。</div></div><span class="badge" style="background:#fff3dc;color:#8a5d00">測試</span></div>
+   <div class="source-row"><div><b>目前 App 字庫</b><div class="sub">目前為已逐題檢查的驗證樣本字庫；官方清單提供字詞／分級依據，中文義、例句與解析屬教學內容。</div></div><span class="badge" style="background:#fff3dc;color:#8a5d00">測試</span></div>
  </div>
  <div class="card">
    <h2>學習資料</h2>
@@ -133,15 +133,15 @@ const WORDS=[
  {w:'practice',m:'練習',p:'n./v.',e:'Daily practice improves your English.',lv:1,j:1},
  {w:'weather',m:'天氣',p:'n.',e:'The weather is nice today.',lv:1,j:1},
  {w:'advice',m:'建議',p:'n.',e:'My teacher gave me useful advice.',lv:2,j:2},
- {w:'although',m:'雖然',p:'conj.',e:'Although it was raining, we went out.',lv:2,j:2},
+ {w:'although',m:'雖然',p:'conj.',e:'Although it was raining, we went out.',lv:1,j:2},
  {w:'environment',m:'環境',p:'n.',e:'We should protect the environment.',lv:2,j:2},
- {w:'experience',m:'經驗；經歷',p:'n./v.',e:'It was a valuable experience.',lv:2,j:2},
+ {w:'experience',m:'經驗；經歷',p:'n./v.',e:'It was a valuable experience.',lv:1,j:1},
  {w:'improve',m:'改善；進步',p:'v.',e:'Reading can improve your vocabulary.',lv:2,j:2},
- {w:'prepare',m:'準備',p:'v.',e:'She prepared carefully for the exam.',lv:2,j:2},
- {w:'receive',m:'收到；接收',p:'v.',e:'I received a message this morning.',lv:2,j:2},
- {w:'successful',m:'成功的',p:'adj.',e:'The event was very successful.',lv:2,j:2},
- {w:'through',m:'穿過；透過',p:'prep./adv.',e:'We walked through the park.',lv:2,j:2},
- {w:'without',m:'沒有；不帶',p:'prep.',e:'He left without saying goodbye.',lv:2,j:2},
+ {w:'prepare',m:'準備',p:'v.',e:'We need to prepare carefully for the exam.',lv:1,j:1},
+ {w:'receive',m:'收到；接收',p:'v.',e:'Did you receive my message last night?',lv:2,j:2},
+ {w:'successful',m:'成功的',p:'adj.',e:'The event was very successful.',lv:1,j:1},
+ {w:'through',m:'穿過；透過',p:'prep./adv.',e:'We walked through the park.',lv:1,j:1},
+ {w:'without',m:'沒有；不帶',p:'prep./adv.',e:'He left without saying goodbye.',lv:1,j:1},
  {w:'grade',m:'年級；成績；評分',p:'n./v.',e:'She received a good grade.',lv:1},
  {w:'ground',m:'地面；土地',p:'n./v.',e:'The ball fell to the ground.',lv:1},
  {w:'grow',m:'成長；種植',p:'v.',e:'Children grow quickly.',lv:1},
@@ -150,38 +150,35 @@ const WORDS=[
  {w:'gradual',m:'逐漸的',p:'adj.',e:'There was a gradual improvement.',lv:2},
  {w:'grain',m:'穀物；顆粒',p:'n.',e:'Rice is an important grain.',lv:2},
  {w:'guard',m:'守衛；保護',p:'n./v.',e:'The guard checked the entrance.',lv:2},
- {w:'handle',m:'處理；把手',p:'v./n.',e:'She handled the problem calmly.',lv:2},
- {w:'grasp',m:'理解；抓住',p:'v./n.',e:'He quickly grasped the main idea.',lv:3},
- {w:'grocery',m:'食品雜貨',p:'n.',e:'We bought groceries after work.',lv:3},
+ {w:'handle',m:'處理；把手',p:'v./n.',e:'She can handle difficult customers calmly.',lv:2},
+ {w:'grasp',m:'理解；抓住',p:'v./n.',e:'It took me a while to grasp the main idea.',lv:3},
+ {w:'grocery',m:'食品雜貨（常用複數 groceries）',p:'n.',e:'We stopped at the grocery store after work.',lv:3},
  {w:'guardian',m:'監護人；守護者',p:'n.',e:'A guardian signed the form.',lv:4},
- {w:'guarantee',m:'保證',p:'v./n.',e:'The company guarantees the product.',lv:4},
+ {w:'guarantee',m:'保證',p:'v./n.',e:'A high salary cannot guarantee job satisfaction.',lv:4},
  {w:'distinguish',m:'區分；辨別',p:'v.',e:'We must distinguish fact from opinion.',lv:4},
- {w:'consequence',m:'結果；後果',p:'n.',e:'Every decision has consequences.',lv:4},
- {w:'significant',m:'重要的；顯著的',p:'adj.',e:'There was a significant increase in sales.',lv:4},
+ {w:'consequence',m:'結果；後果',p:'n.',e:'One consequence of the decision was a higher cost.',lv:4},
+ {w:'significant',m:'重要的；顯著的',p:'adj.',e:'There was a significant increase in sales.',lv:3},
  {w:'gravity',m:'重力；嚴重性',p:'n.',e:'Gravity pulls objects toward Earth.',lv:5},
- {w:'habitat',m:'棲息地',p:'n.',e:'The forest is home to many habitats.',lv:5},
- {w:'guideline',m:'指導原則',p:'n.',e:'Please follow the safety guidelines.',lv:5},
- {w:'grieve',m:'悲傷；哀悼',p:'v.',e:'The family grieved after the loss.',lv:5},
- {w:'grim',m:'嚴峻的；令人沮喪的',p:'adj.',e:'The report painted a grim picture.',lv:5},
- {w:'substantial',m:'大量的；重大的',p:'adj.',e:'The project requires substantial investment.',lv:5},
+ {w:'habitat',m:'棲息地',p:'n.',e:'The forest provides a natural habitat for many animals.',lv:5},
+ {w:'guideline',m:'指導原則',p:'n.',e:'This guideline helps students write clearly.',lv:5},
+ {w:'grieve',m:'悲傷；哀悼',p:'v.',e:'People grieve in different ways after a loss.',lv:5},
+ {w:'grim',m:'嚴峻的；令人沮喪的',p:'adj.',e:'The report painted a grim picture of the economy.',lv:5},
+ {w:'substantial',m:'大量的；重大的',p:'adj.',e:'The firm made a substantial investment.',lv:5},
  {w:'preliminary',m:'初步的',p:'adj.',e:'These are preliminary findings.',lv:5},
  {w:'coherent',m:'連貫的；一致的',p:'adj.',e:'She gave a coherent explanation.',lv:5},
  {w:'inevitable',m:'不可避免的',p:'adj.',e:'Some change is inevitable.',lv:5},
- {w:'hamper',m:'妨礙；阻礙',p:'v.',e:'Heavy rain hampered rescue efforts.',lv:6},
+ {w:'hamper',m:'妨礙；阻礙',p:'v.',e:'Heavy rain can hamper rescue efforts.',lv:6},
  {w:'harness',m:'利用；控制',p:'v./n.',e:'Scientists hope to harness solar energy.',lv:6},
- {w:'harass',m:'騷擾',p:'v.',e:'Workers should not be harassed at work.',lv:6},
+ {w:'harass',m:'騷擾',p:'v.',e:'It is wrong to harass people at work.',lv:6},
  {w:'deteriorate',m:'惡化',p:'v.',e:'Conditions may deteriorate rapidly.',lv:6}
 ];
 
 const TRACKS={
- j1200:{title:'國中 1,200 基礎',desc:'國中課綱基本字彙方向（目前為測試字庫）',filter:x=>x.j===1,target:1200},
- j2000:{title:'國中 2,000 進階／會考閱讀',desc:'國中常用參考字彙，用於提升閱讀覆蓋率（目前為測試字庫）',filter:x=>x.j===1||x.j===2,target:2000},
- h4500:{title:'高中 4,500 學測核心',desc:'高中常用約 4,500 字詞為主；參考詞彙表可至 Level 1–5（目前為測試字庫）',filter:x=>x.lv<=5,target:4500},
- h6000:{title:'高中進階／挑戰',desc:'大考中心 Level 1–6 方向（目前為測試字庫）',filter:x=>x.lv<=6,target:6000}
+ j1200:{title:'國中 1,200 會考核心',desc:'課綱附錄五表一的基本 1,200 字；會考英語科語言成分核心（目前為驗證樣本字庫）',filter:x=>x.j===1,target:1200},
+ j2000:{title:'國中 2,000 擴充字彙',desc:'1,200 核心加其他常用參考字彙，用於加深加廣；不是會考固定命題字彙範圍（目前為驗證樣本字庫）',filter:x=>x.j===1||x.j===2,target:2000},
+ h4500:{title:'高中 4,500 學測核心',desc:'學測以高中常用約 4,500 字詞為主；參考詞彙表 Level 1–5，仍可能出現更高級詞彙（目前為驗證樣本字庫）',filter:x=>x.lv<=5,target:4500},
+ h6000:{title:'高中進階／挑戰',desc:'延伸至參考詞彙表 Level 6 與較高難度閱讀（目前為驗證樣本字庫）',filter:x=>x.lv<=6,target:6000}
 };
-
-const JUNIOR_SKILLS=['en','listen','cloze','basiccoll','spell'];
-const HIGH_SKILLS=['en','context','collocation','diff','spell'];
 
 const COLLOCATIONS={
  borrow:'borrow a book / borrow something from someone',
@@ -198,31 +195,80 @@ const COLLOCATIONS={
  preliminary:'preliminary findings',
  coherent:'a coherent argument',
  inevitable:'an inevitable result',
+ habitat:'natural habitat',
  deteriorate:'conditions deteriorate'
 };
 
 const JUNIOR_Q={
+ answer:{q:'Please _____ the question in a complete sentence.',c:'answer',o:['answer','borrow','prepare','receive'],why:'answer a question 是「回答問題」的基本搭配。'},
+ because:{q:'Mia stayed home _____ she was sick, not because of the rain.',c:'because',o:['because','although','through','without'],why:'because 引導原因，說明「因為她生病」。'},
  borrow:{q:'May I _____ your pencil for a minute?',c:'borrow',o:['borrow','lend','bring','send'],why:'borrow 是「向別人借入」；lend 是「借給別人」。'},
- advice:{q:'My teacher gave me some useful _____.',c:'advice',o:['advice','practice','weather','language'],why:'give advice 是常見搭配；advice 是不可數名詞。'},
- prepare:{q:'We need to _____ for tomorrow’s English test.',c:'prepare',o:['prepare','receive','borrow','answer'],why:'prepare for a test 是常見搭配。'},
  careful:{q:'Be _____ when you cross the busy street.',c:'careful',o:['careful','different','successful','important'],why:'be careful 是「小心、注意」的常見用法。'},
- improve:{q:'Reading every day can _____ your English.',c:'improve',o:['improve','receive','borrow','answer'],why:'improve English 表示「提升英文能力」。'},
- receive:{q:'I _____ a birthday card from my friend yesterday.',c:'received',o:['received','borrowed','prepared','practiced'],why:'receive ... from ... 表示「從某人收到……」。'},
- although:{q:'_____ it was raining, we still went out.',c:'Although',o:['Although','Because','Without','Through'],why:'although 引導讓步子句，表示「雖然……但是……」。'},
- through:{q:'We walked _____ the park on our way home.',c:'through',o:['through','without','although','because'],why:'walk through 表示「穿過」。'}
+ different:{q:'The twins look alike, but their hobbies are very _____.',c:'different',o:['different','careful','successful','important'],why:'different 表示「不同的」，與前面的 look alike 形成對比。'},
+ important:{q:'Getting enough sleep is _____ for your health.',c:'important',o:['important','different','careful','successful'],why:'important for ... 表示「對……很重要」。'},
+ language:{q:'English is a _____ spoken in many countries.',c:'language',o:['language','weather','practice','experience'],why:'language 是「語言」。'},
+ practice:{q:'Basketball _____ starts at four after school.',c:'practice',o:['practice','language','weather','experience'],why:'basketball practice 是「籃球練習」。'},
+ weather:{q:'The picnic was canceled because of the bad _____.',c:'weather',o:['weather','language','practice','advice'],why:'bad weather 是「壞天氣」。'},
+ advice:{q:'My teacher gave me useful _____ about studying.',c:'advice',o:['advice','weather','language','practice'],why:'give advice 是常見搭配；advice 是不可數名詞。'},
+ although:{q:'_____ it was raining heavily, the outdoor game continued as planned.',c:'Although',o:['Although','Because','Through','Without'],why:'although 表示「雖然」，引導讓步子句；英文同一句通常不再搭配 but。'},
+ environment:{q:'Recycling helps protect the _____.',c:'environment',o:['environment','experience','language','weather'],why:'protect the environment 是「保護環境」。'},
+ experience:{q:'Traveling alone was a new _____ for me.',c:'experience',o:['experience','advice','language','environment'],why:'experience 在此作名詞，表示「經歷、體驗」。'},
+ improve:{q:'Reading every day can _____ your English.',c:'improve',o:['improve','receive','borrow','answer'],why:'improve your English 表示「提升英文能力」。'},
+ prepare:{q:'We need to _____ for tomorrow’s English test.',c:'prepare',o:['prepare','receive','improve','borrow'],why:'prepare for a test 是「準備考試」。'},
+ receive:{q:'Did you _____ my message last night?',c:'receive',o:['receive','prepare','improve','borrow'],why:'receive a message 表示「收到訊息」。'},
+ successful:{q:'The school festival was very _____; hundreds of people came.',c:'successful',o:['successful','careful','different','important'],why:'successful 表示「成功的」，後半句提供成果線索。'},
+ through:{q:'We walked _____ the tunnel to reach the other side.',c:'through',o:['through','without','although','because'],why:'walk through 表示「穿過」。'},
+ without:{q:'He left home _____ his umbrella, so he got wet.',c:'without',o:['without','through','because','although'],why:'without 表示「沒有、不帶」。'}
 };
 
 const HIGH_Q={
- significant:{q:'The new policy led to a _____ increase in the number of applicants.',c:'significant',o:['significant','sufficient','accurate','gradual'],why:'significant increase 是常見搭配，表示「顯著增加」；sufficient 是「足夠的」。'},
- consequence:{q:'Ignoring the warning may have serious _____.',c:'consequences',o:['consequences','guarantees','habitats','guidelines'],why:'have serious consequences 表示「造成嚴重後果」。'},
- distinguish:{q:'Good readers learn to _____ fact from opinion.',c:'distinguish',o:['distinguish','guarantee','grieve','harness'],why:'distinguish A from B 是常見搭配，表示「區分 A 與 B」。'},
+ grade:{q:'Lena received a high _____ on her math test.',c:'grade',o:['grade','ground','grain','habit'],why:'grade 在此表示「成績」。'},
+ ground:{q:'The keys fell to the _____ beside the door.',c:'ground',o:['ground','grade','grain','gravity'],why:'ground 在此表示「地面」。'},
+ grow:{q:'Tomatoes _____ well in warm, sunny weather.',c:'grow',o:['grow','guard','grasp','grieve'],why:'grow 表示「生長」。'},
+ guess:{q:'I do not know the answer, so I will have to _____.',c:'guess',o:['guess','guard','grasp','grow'],why:'guess 表示「猜測」。'},
+ habit:{q:'Reading before bed is a good _____.',c:'habit',o:['habit','habitat','guideline','consequence'],why:'habit 表示「習慣」。'},
+ gradual:{q:'The patient showed _____ improvement over several weeks.',c:'gradual',o:['gradual','grim','coherent','preliminary'],why:'gradual improvement 表示「逐漸的改善」。'},
+ grain:{q:'Rice is an important _____ in many Asian diets.',c:'grain',o:['grain','grocery','habitat','guideline'],why:'grain 表示「穀物」。'},
+ guard:{q:'Security officers _____ the entrance at night.',c:'guard',o:['guard','grasp','grow','grieve'],why:'guard 作動詞表示「守衛、看守」。'},
+ handle:{q:'She can _____ difficult customers calmly.',c:'handle',o:['handle','hamper','harness','harass'],why:'handle 在此表示「處理、應付」。'},
+ grasp:{q:'It took me a while to _____ the main idea.',c:'grasp',o:['grasp','guard','grade','grow'],why:'grasp the main idea 表示「理解主旨」。'},
+ grocery:{q:'We stopped at the _____ store to buy milk.',c:'grocery',o:['grocery','grain','ground','gravity'],why:'grocery store 是「食品雜貨店」。'},
+ guardian:{q:'A parent or legal _____ must sign the form.',c:'guardian',o:['guardian','guard','guideline','guarantee'],why:'legal guardian 是「法定監護人」。'},
  guarantee:{q:'A high salary does not _____ job satisfaction.',c:'guarantee',o:['guarantee','distinguish','deteriorate','grieve'],why:'guarantee 在此表示「保證、確保」。'},
+ distinguish:{q:'Good readers learn to _____ fact from opinion.',c:'distinguish',o:['distinguish','guarantee','grieve','harness'],why:'distinguish A from B 是常見搭配，表示「區分 A 與 B」。'},
+ consequence:{q:'Ignoring the warning may have serious _____.',c:'consequences',o:['consequences','guarantees','habitats','guidelines'],why:'have serious consequences 表示「造成嚴重後果」。'},
+ significant:{q:'Applications rose by 45 percent in one year, a _____ increase that surprised the committee.',c:'significant',o:['significant','sufficient','coherent','preliminary'],why:'45% 的明確增幅支持 significant「顯著的」；其餘選項不符合此語意。'},
+ gravity:{q:'_____ causes objects to fall toward Earth.',c:'Gravity',o:['Gravity','Habitat','Guideline','Consequence'],why:'gravity 是「重力」。'},
+ habitat:{q:'Wetlands provide an important _____ for many birds.',c:'habitat',o:['habitat','gravity','guideline','consequence'],why:'habitat 是動植物的「棲息地」。'},
+ guideline:{q:'The teacher gave us a clear _____ for writing the report.',c:'guideline',o:['guideline','habitat','gravity','consequence'],why:'guideline 表示「指導原則、準則」。'},
+ grieve:{q:'People may _____ for a long time after losing someone they love.',c:'grieve',o:['grieve','grim','grasp','guard'],why:'grieve 表示「悲傷、哀悼」。'},
+ grim:{q:'The report painted a _____ picture of the economy, warning of severe job losses.',c:'grim',o:['grim','gradual','coherent','preliminary'],why:'grim 表示「嚴峻、令人沮喪的」。'},
  substantial:{q:'The project requires a _____ amount of time and money.',c:'substantial',o:['substantial','preliminary','coherent','inevitable'],why:'a substantial amount 表示「相當大量」。'},
  preliminary:{q:'These are only _____ findings; more research is needed.',c:'preliminary',o:['preliminary','inevitable','substantial','coherent'],why:'preliminary findings 是「初步研究結果」。'},
  coherent:{q:'The writer presents a clear and _____ argument.',c:'coherent',o:['coherent','preliminary','inevitable','substantial'],why:'coherent argument 表示「連貫、有條理的論點」。'},
  inevitable:{q:'With rapid technological change, some adjustment is _____.',c:'inevitable',o:['inevitable','coherent','preliminary','substantial'],why:'inevitable 表示「不可避免的」。'},
- deteriorate:{q:'Without proper maintenance, the building may _____ quickly.',c:'deteriorate',o:['deteriorate','guarantee','distinguish','harness'],why:'deteriorate 表示狀況「惡化」。'},
- habitat:{q:'Wetlands provide an important _____ for many birds.',c:'habitat',o:['habitat','gravity','guideline','consequence'],why:'habitat 表示動植物的「棲息地」。'}
+ hamper:{q:'Heavy snow may _____ rescue efforts in the mountains.',c:'hamper',o:['hamper','harness','harass','deteriorate'],why:'hamper 表示「妨礙、阻礙」。'},
+ harness:{q:'Engineers are trying to _____ solar energy more efficiently.',c:'harness',o:['harness','hamper','harass','deteriorate'],why:'harness 在此表示「利用、控制能源」。'},
+ harass:{q:'It is illegal to _____ workers because of their background.',c:'harass',o:['harass','harness','hamper','deteriorate'],why:'harass 表示「騷擾」。'},
+ deteriorate:{q:'Without proper maintenance, the building may _____ quickly.',c:'deteriorate',o:['deteriorate','guarantee','distinguish','harness'],why:'deteriorate 表示狀況「惡化」。'}
+};
+
+const COLL_Q={
+ significant:{q:'哪一個搭配最自然地表示「顯著增加」？',c:'a significant increase',o:['a significant increase','a coherent increase','a preliminary increase','a sufficient increase'],why:'significant increase 是常見搭配，表示「顯著增加」。'},
+ consequence:{q:'哪一個搭配表示「承擔／面對後果」？',c:'face the consequences',o:['face the consequences','face the guidelines','face the habitats','face the guarantees'],why:'face the consequences 是常見搭配。'},
+ distinguish:{q:'哪一個搭配表示「區分事實與意見」？',c:'distinguish fact from opinion',o:['distinguish fact from opinion','guarantee fact from opinion','harness fact from opinion','handle fact from opinion'],why:'distinguish A from B 是標準搭配。'},
+ substantial:{q:'哪一個搭配表示「大量、充分分量的證據」？',c:'substantial evidence',o:['substantial evidence','coherent evidence','inevitable evidence','grim evidence'],why:'substantial evidence 表示「大量、具分量的證據」。'},
+ preliminary:{q:'哪一個搭配表示「初步發現」？',c:'preliminary findings',o:['preliminary findings','coherent findings','inevitable findings','grim findings'],why:'preliminary findings 是常見學術搭配。'},
+ coherent:{q:'哪一個搭配表示「連貫的論點」？',c:'a coherent argument',o:['a coherent argument','a preliminary argument','an inevitable argument','a substantial argument'],why:'coherent argument 表示「連貫、有條理的論點」。'},
+ inevitable:{q:'哪一個搭配表示「不可避免的結果」？',c:'an inevitable result',o:['an inevitable result','a coherent result','a preliminary result','a grim result'],why:'inevitable result 表示「不可避免的結果」。'},
+ habitat:{q:'哪一個搭配表示「自然棲息地」？',c:'natural habitat',o:['natural habitat','natural gravity','natural guideline','natural consequence'],why:'natural habitat 是常見搭配。'}
+};
+
+const DIFF_Q={
+ significant:{q:'哪個字最接近「大到足以被注意；顯著的」？',c:'significant',o:['significant','sufficient','preliminary','coherent'],why:'significant 指「重要或顯著到足以被注意」；sufficient 是「足夠的」。'},
+ coherent:{q:'哪個字表示「邏輯連貫、容易理解的」？',c:'coherent',o:['coherent','gradual','preliminary','grim'],why:'coherent 表示內容連貫、一致。'},
+ inevitable:{q:'哪個字表示「無法避免的」？',c:'inevitable',o:['inevitable','coherent','preliminary','substantial'],why:'inevitable = unavoidable，表示「不可避免的」。'},
+ deteriorate:{q:'哪個動詞表示「變得更糟、惡化」？',c:'deteriorate',o:['deteriorate','improve','maintain','guarantee'],why:'deteriorate 表示「惡化」；improve 則是「改善」。'}
 };
 
 let track=localStorage.getItem('smart_vocab_track')||'';
@@ -230,8 +276,8 @@ let learnIndex=0,qstate=null,searchText='';
 let db=JSON.parse(localStorage.getItem('smart_vocab_progress_v4')||'{}');
 
 function state(w){
- if(!db[w]) db[w]={mastery:0,ok:0,bad:0,due:0,last:0,types:{en:0,zh:0,listen:0,cloze:0,basiccoll:0,context:0,collocation:0,diff:0,spell:0}};
- return db[w];
+ if(!db[w]) db[w]={mastery:0,ok:0,bad:0,due:0,last:0,seen:0,selfKnown:0,types:{en:0,listen:0,context:0,collocation:0,diff:0,spell:0}};
+ const s=db[w]; if(s.seen==null)s.seen=0;if(s.selfKnown==null)s.selfKnown=0;if(!s.types)s.types={};return s;
 }
 function save(){localStorage.setItem('smart_vocab_progress_v4',JSON.stringify(db))}
 function pool(){return WORDS.filter(TRACKS[track].filter)}
@@ -254,8 +300,8 @@ function switchPane(id){
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>switchPane(b.dataset.tab));
 
 function renderStats(){
- const a=pool(),now=Date.now(),known=a.filter(x=>state(x.w).mastery>=4).length;
- const due=a.filter(x=>!state(x.w).due||state(x.w).due<=now).length;
+ const a=pool(),now=Date.now(),known=a.filter(x=>state(x.w).mastery>=5).length;
+ const due=a.filter(x=>state(x.w).due>0&&state(x.w).due<=now).length;
  const weak=a.filter(x=>state(x.w).bad>state(x.w).ok||state(x.w).mastery<2).length;
  const ok=a.reduce((s,x)=>s+state(x.w).ok,0),tot=a.reduce((s,x)=>s+state(x.w).ok+state(x.w).bad,0);
  const pct=a.length?Math.round(known/a.length*100):0;
@@ -265,8 +311,8 @@ function renderStats(){
 
 function renderToday(){
  const a=pool(),now=Date.now();
- const fresh=a.filter(x=>state(x.w).ok+state(x.w).bad===0).length;
- const due=a.filter(x=>!state(x.w).due||state(x.w).due<=now).length;
+ const fresh=a.filter(x=>(state(x.w).seen||0)===0).length;
+ const due=a.filter(x=>state(x.w).due>0&&state(x.w).due<=now).length;
  const wrong=a.filter(x=>state(x.w).bad>0).length;
  today.innerHTML='<div class="card"><h2>今日任務</h2>'+
  task('📖','新單字',Math.min(10,fresh),'今天建議學習的全新單字')+
@@ -287,10 +333,15 @@ function renderLearn(){
  masteryHTML(s.mastery,x)+'</div>';
 }
 function showLearnAnswer(){learnAnswer.classList.remove('hidden');showAnswerBtn.classList.add('hidden')}
-function markLearn(ok){let x=pool()[learnIndex%pool().length];updateState(x,ok,'en');learnIndex++;save();renderAll()}
+function markLearn(ok){
+ const x=pool()[learnIndex%pool().length],s=state(x.w),now=Date.now();
+ s.seen=(s.seen||0)+1;s.selfKnown=ok?1:0;s.last=now;
+ if(!s.due)s.due=now+(ok?86400000:0);
+ recomputeMastery(x);learnIndex++;save();renderAll();
+}
 function masteryHTML(n,x){
  const junior=track.startsWith('j');
- const labels=junior?['尚未開始','看過','認得','聽得懂','句子會選','會拼／會用']:['尚未開始','看過','認得','語境會判斷','會拼','能在語境中使用'];
+ const labels=junior?['尚未開始','看過','認得字義','聽得懂','生活句子會判斷','會拼寫']:['尚未開始','看過','認得字義','語境會判斷','搭配／用法較穩定','會拼寫'];
  return '<div class="mastery"><div class="sub" style="text-align:center">能力層級 '+n+'/5 · '+labels[n]+'</div><div class="dots">'+[1,2,3,4,5].map(i=>'<i class="dot '+(i<=n?'on':'')+'"></i>').join('')+'</div></div>'
 }
 function speakWord(w){if('speechSynthesis'in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(w);u.lang='en-US';u.rate=.85;speechSynthesis.speak(u)}}
@@ -299,52 +350,60 @@ function rankWords(a){
  const now=Date.now();
  return [...a].sort((A,B)=>{
   const a=state(A.w),b=state(B.w);
-  const sa=a.bad*3+(5-a.mastery)*2+((!a.due||a.due<=now)?3:0);
-  const sb=b.bad*3+(5-b.mastery)*2+((!b.due||b.due<=now)?3:0);
+  const sa=a.bad*3+(5-a.mastery)*2+((a.due>0&&a.due<=now)?3:0)+((a.seen||0)===0?2:0);
+  const sb=b.bad*3+(5-b.mastery)*2+((b.due>0&&b.due<=now)?3:0)+((b.seen||0)===0?2:0);
   return sb-sa;
  });
 }
-function skillSet(){return track.startsWith('j')?JUNIOR_SKILLS:HIGH_SKILLS}
+function availableTypes(x){
+ if(track.startsWith('j')) return ['en','listen',...(JUNIOR_Q[x.w]?['context']:[]),'spell'];
+ return ['en',...((HIGH_Q[x.w]||JUNIOR_Q[x.w])?['context']:[]),...(COLL_Q[x.w]?['collocation']:[]),...(DIFF_Q[x.w]?['diff']:[]),'spell'];
+}
 function weakestType(x){
- const t=state(x.w).types||{};
- return skillSet().slice().sort((a,b)=>(t[a]||0)-(t[b]||0))[0];
+ const t=state(x.w).types||{},types=availableTypes(x);
+ return types.slice().sort((a,b)=>(t[a]||0)-(t[b]||0))[0];
+}
+function addUnique(arr,items,limit){
+ for(const x of items){if(arr.length>=limit)break;if(!arr.some(y=>y.w===x.w))arr.push(x)}
+}
+function buildSession(){
+ const a=pool(),now=Date.now(),selected=[];
+ addUnique(selected,rankWords(a.filter(x=>state(x.w).bad>0)),3);
+ addUnique(selected,rankWords(a.filter(x=>state(x.w).due>0&&state(x.w).due<=now)),7);
+ addUnique(selected,rankWords(a.filter(x=>(state(x.w).seen||0)===0)),10);
+ addUnique(selected,rankWords(a),10);
+ return selected.slice(0,10);
 }
 function startSmart(){
- qstate={items:rankWords(pool()).slice(0,Math.min(10,pool().length)),i:0,score:0,lock:false};
+ qstate={items:buildSession(),i:0,score:0,lock:false,why:''};
  switchPane('quiz');renderQuestion();
 }
 function renderQuizHome(){
  const junior=track.startsWith('j');
  quiz.innerHTML='<div class="card"><h2>智慧測驗</h2><p class="sub">'+
- (junior?'國中版重點：基本字義、聽音辨字、生活句子、常用搭配與拼字。':'高中版重點：語境判斷、常用搭配、近義／易混字辨析與拼字輸出。')+
+ (junior?'國中版：字義、聽音、生活語境與拼字；不以艱深近義字作為主要負擔。':'高中版：字義、學測型語境、搭配／易混字與拼字輸出。')+
  '</p><button class="primary full" onclick="startSmart()">開始 10 題</button></div>'
 }
-function typeLabel(t){return {en:'字義辨識',listen:'聽音辨字',cloze:'生活句子',basiccoll:'基本搭配',context:'語境選字',collocation:'搭配詞',diff:'近義辨析',spell:'拼字輸出'}[t]||t}
-function makeOptions(qobj){return shuffle(qobj.o)}
+function typeLabel(t){return {en:'字義辨識',listen:'聽音辨字',context:'語境選字',collocation:'搭配詞',diff:'易混字辨析',spell:'拼字輸出'}[t]||t}
 function renderQuestion(){
  const x=qstate.items[qstate.i],type=weakestType(x),pct=Math.round(qstate.i/qstate.items.length*100);
  let body='',correct='',why='',qobj=null;
-
  if(type==='spell'){
    correct=x.w;
    body='<div class="qtext">'+x.m+'</div><div class="sub">請拼出英文單字</div><input id="spellInput" class="search" style="margin:14px 0" autocomplete="off" autocapitalize="none"><button class="primary" onclick="checkSpell()">送出答案</button>';
  }else if(type==='listen'){
    correct=x.w;
    const opts=shuffle([x.w,...shuffle(pool().filter(y=>y.w!==x.w).map(y=>y.w)).slice(0,3)]);
-   body='<div class="qtext">聽發音，選出正確單字</div><button class="secondary" style="margin-bottom:14px" onclick="speakWord('+JSON.stringify(x.w)+')">🔊 播放發音</button><div class="options">'+opts.map((o,i)=>'<button class="option" onclick="answerMC(this,'+JSON.stringify(o)+','+JSON.stringify(correct)+','+JSON.stringify(type)+')">'+String.fromCharCode(65+i)+'　'+o+'</button>').join('')+'</div>';
+   body='<div class="qtext">聽發音，選出正確單字</div><button class="secondary" style="margin-bottom:14px" onclick="speakWord('+JSON.stringify(x.w)+')">🔊 播放裝置發音</button>'+questionOptions('',opts,correct,type);
    setTimeout(()=>speakWord(x.w),150);
- }else if(type==='basiccoll' && JUNIOR_Q[x.w]){
-   qobj=JUNIOR_Q[x.w];correct=qobj.c;why=qobj.why;
-   body=questionOptions(qobj.q,qobj.o,correct,type);
- }else if((type==='context'||type==='collocation'||type==='diff') && HIGH_Q[x.w]){
-   qobj=HIGH_Q[x.w];correct=qobj.c;why=qobj.why;
-   const label=type==='collocation'?'選出最自然的搭配／用法：':type==='diff'?'依語境辨別最適合的字：':'依上下文選出最適合的字：';
-   body='<div class="sub">'+label+'</div>'+questionOptions(qobj.q,qobj.o,correct,type);
- }else if(type==='cloze'){
-   correct=x.w;
-   const q=x.e.replace(new RegExp('\\b'+x.w+'\\b','i'),'_____');
-   const opts=shuffle([correct,...shuffle(pool().filter(y=>y.w!==x.w).map(y=>y.w)).slice(0,3)]);
-   body=questionOptions(q,opts,correct,type);
+ }else if(type==='context'){
+   qobj=track.startsWith('j')?JUNIOR_Q[x.w]:(HIGH_Q[x.w]||JUNIOR_Q[x.w]);
+   if(!qobj){qstate.why='';return fallbackMeaningQuestion(x,type,pct)}
+   correct=qobj.c;why=qobj.why;body=questionOptions(qobj.q,qobj.o,correct,type);
+ }else if(type==='collocation'){
+   qobj=COLL_Q[x.w];correct=qobj.c;why=qobj.why;body=questionOptions(qobj.q,qobj.o,correct,type);
+ }else if(type==='diff'){
+   qobj=DIFF_Q[x.w];correct=qobj.c;why=qobj.why;body=questionOptions(qobj.q,qobj.o,correct,type);
  }else{
    correct=x.m;
    const opts=shuffle([correct,...shuffle([...new Set(pool().filter(y=>y.w!==x.w).map(y=>y.m))]).slice(0,3)]);
@@ -353,8 +412,13 @@ function renderQuestion(){
  qstate.why=why;
  quiz.innerHTML='<div class="card"><div class="qmeta">第 '+(qstate.i+1)+' / '+qstate.items.length+' 題 · '+typeLabel(type)+'</div><div class="progress"><i style="width:'+pct+'%"></i></div>'+body+'<div id="feedbackBox"></div></div>';
 }
+function fallbackMeaningQuestion(x,type,pct){
+ const correct=x.m,opts=shuffle([correct,...shuffle([...new Set(pool().filter(y=>y.w!==x.w).map(y=>y.m))]).slice(0,3)]);
+ quiz.innerHTML='<div class="card"><div class="qmeta">第 '+(qstate.i+1)+' / '+qstate.items.length+' 題 · 字義辨識</div><div class="progress"><i style="width:'+pct+'%"></i></div>'+questionOptions('「'+x.w+'」最適合的中文意思是？',opts,correct,'en')+'<div id="feedbackBox"></div></div>';
+}
 function questionOptions(q,opts,correct,type){
- return '<div class="qtext">'+q+'</div><div class="options">'+opts.map((o,i)=>'<button class="option" onclick="answerMC(this,'+JSON.stringify(o)+','+JSON.stringify(correct)+','+JSON.stringify(type)+')">'+String.fromCharCode(65+i)+'　'+o+'</button>').join('')+'</div>'
+ const mixed=shuffle([...new Set(opts)]);
+ return (q?'<div class="qtext">'+q+'</div>':'')+'<div class="options">'+mixed.map((o,i)=>'<button class="option" onclick="answerMC(this,'+JSON.stringify(o)+','+JSON.stringify(correct)+','+JSON.stringify(type)+')">'+String.fromCharCode(65+i)+'　'+o+'</button>').join('')+'</div>'
 }
 function answerMC(btn,val,correct,type){
  if(qstate.lock)return;qstate.lock=true;
@@ -367,21 +431,36 @@ function finishAnswer(ok,type,correct){
  feedbackBox.innerHTML='<div class="feedback"><b style="color:'+(ok?'#148557':'#b63b45')+'">'+(ok?'✓ 答對了！':'答錯了')+'</b><div style="margin-top:8px"><b>'+x.w+'</b>　'+x.p+'　'+x.m+'</div><div class="sub" style="margin-top:6px">'+x.e+'</div>'+(COLLOCATIONS[x.w]?'<div class="sub" style="margin-top:7px"><b>常用搭配：</b>'+COLLOCATIONS[x.w]+'</div>':'')+(qstate.why?'<div class="notice" style="margin-top:9px"><b>老師解析：</b>'+qstate.why+'</div>':'')+masteryHTML(state(x.w).mastery,x)+'<button class="primary full" style="margin-top:14px" onclick="nextQuestion()">下一題</button></div>';
 }
 function nextQuestion(){qstate.i++;qstate.lock=false;if(qstate.i>=qstate.items.length){quiz.innerHTML='<div class="card" style="text-align:center"><div style="font-size:44px;font-weight:900">'+qstate.score+' / '+qstate.items.length+'</div><p class="sub">本次智慧測驗完成</p><button class="primary" onclick="startSmart()">再測一次</button></div>';renderAllExceptQuiz()}else renderQuestion()}
+function recomputeMastery(x){
+ const s=state(x.w),t=s.types||{},seen=(s.seen||0)>0;
+ let n=seen?1:0;
+ if(track.startsWith('j')){
+   if((t.en||0)>0)n=Math.max(n,2);
+   if((t.listen||0)>0)n=Math.max(n,3);
+   if((t.context||0)>0)n=Math.max(n,4);
+   if((t.context||0)>0&&(t.spell||0)>0)n=5;
+ }else{
+   if((t.en||0)>0)n=Math.max(n,2);
+   if((t.context||0)>0)n=Math.max(n,3);
+   if((t.context||0)>1||(t.collocation||0)>0||(t.diff||0)>0)n=Math.max(n,4);
+   if(n>=4&&(t.spell||0)>0)n=5;
+ }
+ s.mastery=n;return n;
+}
 function updateState(x,ok,type){
- const s=state(x.w),now=Date.now();s.last=now;s.types=s.types||{};
- if(ok){s.ok++;s.types[type]=(s.types[type]||0)+1}else{s.bad++;s.types[type]=Math.max(-3,(s.types[type]||0)-1)}
- const req=skillSet(),passed=req.filter(k=>(s.types[k]||0)>0).length;
- const strength=req.reduce((sum,k)=>sum+Math.max(0,s.types[k]||0),0);
- s.mastery=Math.min(5,passed+(passed===req.length&&strength>=7?1:0));
- if(!ok)s.mastery=Math.max(0,s.mastery-1);
- const days=[0,1,3,7,14,30][s.mastery];s.due=now+(ok?days:1)*86400000;
+ const s=state(x.w),now=Date.now();s.last=now;s.seen=Math.max(1,s.seen||0);s.types=s.types||{};
+ if(ok){s.ok++;s.types[type]=(s.types[type]||0)+1}
+ else{s.bad++;s.types[type]=Math.max(-3,(s.types[type]||0)-1)}
+ recomputeMastery(x);
+ const days=[0,1,3,7,14,30][s.mastery]||1;
+ s.due=now+(ok?days:1)*86400000;
 }
 
 function renderRecords(){
  const a=pool();
  records.innerHTML='<div class="card"><h2>學習紀錄</h2><input class="search" placeholder="搜尋單字…" oninput="searchText=this.value.toLowerCase();renderRecords()"><div class="list" style="margin-top:12px">'+
  a.filter(x=>(x.w+' '+x.m).toLowerCase().includes(searchText)).sort((A,B)=>state(B.w).bad-state(A.w).bad||state(A.w).mastery-state(B.w).mastery).map(x=>{
-  const s=state(x.w);return '<div class="item"><div><b>'+x.w+'</b><small>'+x.m+'</small></div><div class="mini">熟練 '+s.mastery+'/5<br>答對 '+s.ok+'・答錯 '+s.bad+'</div></div>'
+  const s=state(x.w);return '<div class="item"><div><b>'+x.w+'</b><small>'+x.m+'</small></div><div class="mini">能力 '+s.mastery+'/5<br>答對 '+s.ok+'・答錯 '+s.bad+'</div></div>'
  }).join('')+'</div></div>';
 }
 function renderAllExceptQuiz(){renderStats();renderToday();renderLearn();renderRecords()}
