@@ -178,10 +178,10 @@ const DETAIL_WORDS=[
 ];
 
 const DETAIL_MAP=new Map(DETAIL_WORDS.map(x=>[x.w.toLowerCase(),x]));
-const MEANING_MAP=window.VOCAB_MEANINGS||{};
+const MEANING_MAP=new Map(Object.entries(window.VOCAB_MEANINGS||{}).map(([k,v])=>[String(k).toLowerCase(),v]));
 const CN2TW=(window.OpenCC&&OpenCC.Converter)?OpenCC.Converter({from:'cn',to:'tw'}):(s=>s);
 function toTW(s){try{return s?CN2TW(String(s)):''}catch(e){return String(s||'')}}
-function dictInfo(w){return MEANING_MAP[String(w).toLowerCase()]||null}
+function dictInfo(w){return MEANING_MAP.get(String(w).toLowerCase())||null}
 function mergeJuniorEntry(x){
  const key=String(x.w).toLowerCase(),d=DETAIL_MAP.get(key),md=dictInfo(key);
  return {
@@ -742,6 +742,6 @@ function startPlacement(){
  ask();
 }
 function resetProgress(){if(confirm('確定要清除這台裝置上的學習紀錄？')){db={};recentSessions={};placementRecent=[];localStorage.removeItem('smart_vocab_progress_v5');localStorage.removeItem('smart_vocab_recent_v1');localStorage.removeItem('smart_vocab_placement_recent_v1');localStorage.removeItem('smart_vocab_last_saved');lastSavedAt=0;save();if(track)renderAll();alert('已清除本機學習紀錄')}}
-if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=10').catch(()=>{}))}
+if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=11').catch(()=>{}))}
 </script>
 </body></html>
