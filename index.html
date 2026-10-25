@@ -399,6 +399,22 @@ function pool(){
  return catalogPool().filter(x=>x.m);
 }
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function meaningChoices(correct,candidates,fallback=[]){
+ const vals=[];
+ for(const y of shuffle(candidates)){
+   const m=typeof y==='string'?y:y?.m;
+   if(m&&m!==correct&&!vals.includes(m))vals.push(m);
+   if(vals.length>=3)break;
+ }
+ if(vals.length<3){
+   for(const y of shuffle(fallback)){
+     const m=typeof y==='string'?y:y?.m;
+     if(m&&m!==correct&&!vals.includes(m))vals.push(m);
+     if(vals.length>=3)break;
+   }
+ }
+ return shuffle([correct,...vals.slice(0,3)]);
+}
 function setNav(name){document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x.dataset.nav===name))}
 function showOnly(id){['homeScreen','appScreen','placementScreen','settingsScreen'].forEach(x=>document.getElementById(x).classList.add('hidden'));document.getElementById(id).classList.remove('hidden')}
 function goHome(){showOnly('homeScreen');setNav('home')}
@@ -563,14 +579,14 @@ function renderQuestion(){
    qobj=DIFF_Q[x.w];correct=qobj.c;why=qobj.why;body=questionOptions(qobj.q,qobj.o,correct,type);
  }else{
    correct=x.m;
-   const opts=shuffle([correct,...shuffle([...new Set(pool().filter(y=>y.w!==x.w).map(y=>y.m))]).slice(0,3)]);
+   const opts=meaningChoices(correct,pool().filter(y=>y.w!==x.w),track.startsWith('j')?JUNIOR_WORDS:HIGH_WORDS);
    body=questionOptions('「'+x.w+'」最適合的中文意思是？',opts,correct,'en');
  }
  qstate.why=why;
  quiz.innerHTML='<div class="card"><div class="qmeta">第 '+(qstate.i+1)+' / '+qstate.items.length+' 題 · '+typeLabel(type)+'</div><div class="progress"><i style="width:'+pct+'%"></i></div>'+body+'<div id="feedbackBox"></div></div>';
 }
 function fallbackMeaningQuestion(x,type,pct){
- const correct=x.m,opts=shuffle([correct,...shuffle([...new Set(pool().filter(y=>y.w!==x.w).map(y=>y.m))]).slice(0,3)]);
+ const correct=x.m,opts=meaningChoices(correct,pool().filter(y=>y.w!==x.w),track.startsWith('j')?JUNIOR_WORDS:HIGH_WORDS);
  quiz.innerHTML='<div class="card"><div class="qmeta">第 '+(qstate.i+1)+' / '+qstate.items.length+' 題 · 字義辨識</div><div class="progress"><i style="width:'+pct+'%"></i></div>'+questionOptions('「'+x.w+'」最適合的中文意思是？',opts,correct,'en')+'<div id="feedbackBox"></div></div>';
 }
 function enc(v){return encodeURIComponent(String(v))}
@@ -708,7 +724,7 @@ function startPlacement(){
    if(!x){finishPlacement();return}
    used.add(x.w);asked.push(x.w);
    const sameBand=HIGH_WORDS.filter(y=>y.w!==x.w&&y.m&&Math.abs((y.lv||1)-x.lv)<=1);
-   const opts=shuffle([x.m,...shuffle(sameBand).slice(0,3).map(y=>y.m)]);
+   const opts=meaningChoices(x.m,sameBand,HIGH_WORDS);
    const bar=document.getElementById('placeBar'),box=document.getElementById('placeBox');
    if(bar)bar.style.width=Math.round(i/12*100)+'%';
    if(!box)return;
@@ -726,6 +742,6 @@ function startPlacement(){
  ask();
 }
 function resetProgress(){if(confirm('確定要清除這台裝置上的學習紀錄？')){db={};recentSessions={};placementRecent=[];localStorage.removeItem('smart_vocab_progress_v5');localStorage.removeItem('smart_vocab_recent_v1');localStorage.removeItem('smart_vocab_placement_recent_v1');localStorage.removeItem('smart_vocab_last_saved');lastSavedAt=0;save();if(track)renderAll();alert('已清除本機學習紀錄')}}
-if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=9').catch(()=>{}))}
+if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=10').catch(()=>{}))}
 </script>
 </body></html>
