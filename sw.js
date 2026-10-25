@@ -1,12 +1,20 @@
-const CACHE='smart-vocab-v8';
+const CACHE='smart-vocab-v9';
 const ASSETS=[
   './','./index.html','./manifest.webmanifest','./icon.svg',
-  './data/junior_official.js','./data/high_official.js','./data/meanings_cn.js'
+  './data/junior_official.js','./data/high_official.js','./data/meanings.js'
 ];
+const OPTIONAL=['https://cdn.jsdelivr.net/npm/opencc-js@1.4.2/dist/umd/full.js'];
 
 self.addEventListener('install',event=>{
   self.skipWaiting();
-  event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)));
+  event.waitUntil(
+    caches.open(CACHE).then(async cache=>{
+      await cache.addAll(ASSETS);
+      await Promise.all(OPTIONAL.map(async url=>{
+        try{const r=await fetch(url,{mode:'cors'});if(r.ok)await cache.put(url,r)}catch(e){}
+      }));
+    })
+  );
 });
 
 self.addEventListener('activate',event=>{
