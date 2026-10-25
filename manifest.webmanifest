@@ -1,0 +1,10 @@
+{
+  "name":"升學英文智慧單字",
+  "short_name":"智慧單字",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#f7f9ff",
+  "theme_color":"#f7f9ff",
+  "description":"依台灣升學範圍設計的英文單字學習與智慧複習工具",
+  "icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
