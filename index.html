@@ -56,8 +56,8 @@ h1,h2,h3,p{margin-top:0}h2{font-size:22px}.hidden{display:none!important}
     <button class="choice h" onclick="selectTrack('h6000')"><div class="ico">📈</div><b>進階／挑戰</b><span class="sub">Level 5–6 進階閱讀方向</span></button>
   </div>
   <div class="card" style="margin-top:16px;background:linear-gradient(135deg,#f1f7ff,#eaf3ff)">
-    <h2>先測程度</h2>
-    <p class="sub">透過少量題目，快速估計目前程度並推薦學習範圍。</p>
+    <h2>試用程度測驗（未校準）</h2>
+    <p class="sub">用目前樣本題庫體驗自適應流程；結果只供功能試用，不代表正式字彙量估計。</p>
     <button class="primary full" onclick="startPlacement()">開始程度測驗 →</button>
   </div>
   <div class="notice"><b>資料狀態：</b>這是功能試用版，字庫尚不是完整 1,200／2,000／4,500／6,000 字。正式字彙範圍會以國教院與大考中心官方資料為基準，不把 AI 自行判斷的分級冒充官方資料。</div>
@@ -67,7 +67,7 @@ h1,h2,h3,p{margin-top:0}h2{font-size:22px}.hidden{display:none!important}
   <div class="card">
     <div class="trackhead"><div><div id="trackTitle" class="track-title"></div><div id="trackDesc" class="sub"></div></div><span class="badge">功能試用版</span></div>
     <div class="progress-wrap">
-      <div class="progress-row"><b>整體進度</b><span><b id="progressText">0 / 0</b>　<span id="progressPct">0%</span></span></div>
+      <div class="progress-row"><b>目前驗證樣本進度</b><span><b id="progressText">0 / 0</b>　<span id="progressPct">0%</span></span></div>
       <div class="progress"><i id="progressBar" style="width:0"></i></div>
     </div>
     <div class="stats">
@@ -104,11 +104,11 @@ h1,h2,h3,p{margin-top:0}h2{font-size:22px}.hidden{display:none!important}
    <h2>資料與來源</h2>
    <div class="source-row"><div><b>國中字彙架構</b><div class="sub">課綱要求國中至少學會並能應用基本 1,200 字；2,000 為擴充參考範圍，不等於會考固定命題字彙。</div></div><span class="badge">官方依據</span></div>
    <div class="source-row"><div><b>高中字彙架構</b><div class="sub">大考中心《高中英文參考詞彙表》分 Level 1–6；學測以高中常用約 4,500 字詞為主，Level 1–5 可作參考，仍可能出現更高級詞彙。</div></div><span class="badge">官方依據</span></div>
-   <div class="source-row"><div><b>目前 App 字庫</b><div class="sub">目前為已逐題檢查的驗證樣本字庫；官方清單提供字詞／分級依據，中文義、例句與解析屬教學內容。</div></div><span class="badge" style="background:#fff3dc;color:#8a5d00">測試</span></div>
+   <div class="source-row"><div><b>目前 App 字庫</b><div class="sub">目前為已逐題檢查的驗證樣本字庫；官方資料負責字詞與分級依據，中文義、例句、搭配與解析屬教學內容，另行檢核。</div></div><span class="badge" style="background:#fff3dc;color:#8a5d00">測試</span></div>
  </div>
  <div class="card">
    <h2>學習資料</h2>
-   <p class="sub">學習紀錄只保存在目前瀏覽器。</p>
+   <p class="sub">學習紀錄只保存在目前瀏覽器。國中與高中進度分開計算，避免不同難度互相污染。</p>
    <button class="bad" onclick="resetProgress()">清除本機學習紀錄</button>
  </div>
 </section>
@@ -216,7 +216,7 @@ const JUNIOR_Q={
  improve:{q:'Reading every day can _____ your English.',c:'improve',o:['improve','receive','borrow','answer'],why:'improve your English 表示「提升英文能力」。'},
  prepare:{q:'We need to _____ for tomorrow’s English test.',c:'prepare',o:['prepare','receive','improve','borrow'],why:'prepare for a test 是「準備考試」。'},
  receive:{q:'Did you _____ my message last night?',c:'receive',o:['receive','prepare','improve','borrow'],why:'receive a message 表示「收到訊息」。'},
- successful:{q:'The school festival was very _____; hundreds of people came.',c:'successful',o:['successful','careful','different','important'],why:'successful 表示「成功的」，後半句提供成果線索。'},
+ successful:{q:'The school festival was very _____; everything went as planned and hundreds of people came.',c:'successful',o:['successful','careful','different','important'],why:'successful 表示「成功的」，後半句提供成果線索。'},
  through:{q:'We walked _____ the tunnel to reach the other side.',c:'through',o:['through','without','although','because'],why:'walk through 表示「穿過」。'},
  without:{q:'He left home _____ his umbrella, so he got wet.',c:'without',o:['without','through','because','although'],why:'without 表示「沒有、不帶」。'}
 };
@@ -226,8 +226,8 @@ const HIGH_Q={
  ground:{q:'The keys fell to the _____ beside the door.',c:'ground',o:['ground','grade','grain','gravity'],why:'ground 在此表示「地面」。'},
  grow:{q:'Tomatoes _____ well in warm, sunny weather.',c:'grow',o:['grow','guard','grasp','grieve'],why:'grow 表示「生長」。'},
  guess:{q:'I do not know the answer, so I will have to _____.',c:'guess',o:['guess','guard','grasp','grow'],why:'guess 表示「猜測」。'},
- habit:{q:'Reading before bed is a good _____.',c:'habit',o:['habit','habitat','guideline','consequence'],why:'habit 表示「習慣」。'},
- gradual:{q:'The patient showed _____ improvement over several weeks.',c:'gradual',o:['gradual','grim','coherent','preliminary'],why:'gradual improvement 表示「逐漸的改善」。'},
+ habit:{q:'Reading before bed every night has become a good _____.',c:'habit',o:['habit','habitat','guideline','consequence'],why:'habit 表示「習慣」。'},
+ gradual:{q:'The patient showed slow, _____ improvement over several weeks.',c:'gradual',o:['gradual','grim','coherent','preliminary'],why:'gradual improvement 表示「逐漸的改善」。'},
  grain:{q:'Rice is an important _____ in many Asian diets.',c:'grain',o:['grain','grocery','habitat','guideline'],why:'grain 表示「穀物」。'},
  guard:{q:'Security officers _____ the entrance at night.',c:'guard',o:['guard','grasp','grow','grieve'],why:'guard 作動詞表示「守衛、看守」。'},
  handle:{q:'She can _____ difficult customers calmly.',c:'handle',o:['handle','hamper','harness','harass'],why:'handle 在此表示「處理、應付」。'},
@@ -246,7 +246,7 @@ const HIGH_Q={
  substantial:{q:'The project requires a _____ amount of time and money.',c:'substantial',o:['substantial','preliminary','coherent','inevitable'],why:'a substantial amount 表示「相當大量」。'},
  preliminary:{q:'These are only _____ findings; more research is needed.',c:'preliminary',o:['preliminary','inevitable','substantial','coherent'],why:'preliminary findings 是「初步研究結果」。'},
  coherent:{q:'The writer presents a clear and _____ argument.',c:'coherent',o:['coherent','preliminary','inevitable','substantial'],why:'coherent argument 表示「連貫、有條理的論點」。'},
- inevitable:{q:'With rapid technological change, some adjustment is _____.',c:'inevitable',o:['inevitable','coherent','preliminary','substantial'],why:'inevitable 表示「不可避免的」。'},
+ inevitable:{q:'With rapid technological change, some adjustment is _____; it cannot be completely avoided.',c:'inevitable',o:['inevitable','coherent','preliminary','substantial'],why:'inevitable 表示「不可避免的」。'},
  hamper:{q:'Heavy snow may _____ rescue efforts in the mountains.',c:'hamper',o:['hamper','harness','harass','deteriorate'],why:'hamper 表示「妨礙、阻礙」。'},
  harness:{q:'Engineers are trying to _____ solar energy more efficiently.',c:'harness',o:['harness','hamper','harass','deteriorate'],why:'harness 在此表示「利用、控制能源」。'},
  harass:{q:'It is illegal to _____ workers because of their background.',c:'harass',o:['harass','harness','hamper','deteriorate'],why:'harass 表示「騷擾」。'},
@@ -273,13 +273,14 @@ const DIFF_Q={
 
 let track=localStorage.getItem('smart_vocab_track')||'';
 let learnIndex=0,qstate=null,searchText='';
-let db=JSON.parse(localStorage.getItem('smart_vocab_progress_v4')||'{}');
+let db=JSON.parse(localStorage.getItem('smart_vocab_progress_v5')||'{}');
 
 function state(w){
- if(!db[w]) db[w]={mastery:0,ok:0,bad:0,due:0,last:0,seen:0,selfKnown:0,types:{en:0,listen:0,context:0,collocation:0,diff:0,spell:0}};
- const s=db[w]; if(s.seen==null)s.seen=0;if(s.selfKnown==null)s.selfKnown=0;if(!s.types)s.types={};return s;
+ const scope=(track.startsWith('j')?'J':'H')+'::'+w;
+ if(!db[scope]) db[scope]={mastery:0,ok:0,bad:0,due:0,last:0,seen:0,selfKnown:0,types:{en:0,listen:0,context:0,collocation:0,diff:0,spell:0}};
+ const s=db[scope];if(s.seen==null)s.seen=0;if(s.selfKnown==null)s.selfKnown=0;if(!s.types)s.types={};return s;
 }
-function save(){localStorage.setItem('smart_vocab_progress_v4',JSON.stringify(db))}
+function save(){localStorage.setItem('smart_vocab_progress_v5',JSON.stringify(db))}
 function pool(){return WORDS.filter(TRACKS[track].filter)}
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function setNav(name){document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x.dataset.nav===name))}
@@ -325,7 +326,8 @@ function task(icon,title,count,desc){return '<div class="task"><div class="task-
 function renderLearn(){
  const a=pool(); if(!a.length)return;
  const x=a[learnIndex%a.length],s=state(x.w);
- learn.innerHTML='<div class="card"><div style="display:flex;justify-content:space-between"><span class="badge">Level '+x.lv+'</span><button class="ghost" onclick="speakWord(\''+x.w+'\')">🔊 發音</button></div>'+
+ const levelBadge=track.startsWith('j')?(x.j===1?'基本 1,200':'擴充 800'):'Level '+x.lv;
+ learn.innerHTML='<div class="card"><div style="display:flex;justify-content:space-between"><span class="badge">'+levelBadge+'</span><button class="ghost" onclick="speakWord(\''+x.w+'\')">🔊 裝置發音</button></div>'+
  '<div class="word">'+x.w+'</div><div class="pos">'+x.p+'</div>'+
  '<div id="learnAnswer" class="hidden"><div class="meaning">'+x.m+'</div><div class="example">'+x.e+'</div>'+(COLLOCATIONS[x.w]?'<div class="notice"><b>常用搭配：</b>'+COLLOCATIONS[x.w]+'</div>':'')+'</div>'+
  '<button id="showAnswerBtn" class="primary full" style="margin-top:22px" onclick="showLearnAnswer()">顯示答案</button>'+
@@ -460,7 +462,7 @@ function renderRecords(){
  const a=pool();
  records.innerHTML='<div class="card"><h2>學習紀錄</h2><input class="search" placeholder="搜尋單字…" oninput="searchText=this.value.toLowerCase();renderRecords()"><div class="list" style="margin-top:12px">'+
  a.filter(x=>(x.w+' '+x.m).toLowerCase().includes(searchText)).sort((A,B)=>state(B.w).bad-state(A.w).bad||state(A.w).mastery-state(B.w).mastery).map(x=>{
-  const s=state(x.w);return '<div class="item"><div><b>'+x.w+'</b><small>'+x.m+'</small></div><div class="mini">能力 '+s.mastery+'/5<br>答對 '+s.ok+'・答錯 '+s.bad+'</div></div>'
+  const s=state(x.w);return '<div class="item"><div><b>'+x.w+'</b><small>'+x.m+'</small></div><div class="mini">能力 '+recomputeMastery(x)+'/5<br>答對 '+s.ok+'・答錯 '+s.bad+'</div></div>'
  }).join('')+'</div></div>';
 }
 function renderAllExceptQuiz(){renderStats();renderToday();renderLearn();renderRecords()}
@@ -477,7 +479,7 @@ function startPlacement(){
    const avg=history.reduce((s,x)=>s+x,0)/Math.max(1,history.length);
    const rec=avg<2?'j2000':avg<4.5?'h4500':'h6000';
    placeBar.style.width='100%';
-   placeBox.innerHTML='<div style="text-align:center;padding:15px 0"><h2>建議：'+TRACKS[rec].title+'</h2><p class="sub">這是功能版的粗略估計；正式程度測驗需要更大的校準題庫。</p><button class="primary" onclick="selectTrack(\''+rec+'\')">使用這個範圍</button></div>';
+   placeBox.innerHTML='<div style="text-align:center;padding:15px 0"><h2>試用建議：'+TRACKS[rec].title+'</h2><p class="sub">此結果僅為功能展示，不代表正式字彙量或考試程度；完整字庫完成後才會校準。</p><button class="primary" onclick="selectTrack(\''+rec+'\')">使用這個範圍</button></div>';
    return;
   }
   const lv=Math.round((lo+hi)/2),cand=WORDS.filter(x=>x.lv===lv),x=cand[Math.floor(Math.random()*cand.length)]||WORDS[0];
@@ -488,7 +490,7 @@ function startPlacement(){
  }
  ask();
 }
-function resetProgress(){if(confirm('確定要清除這台裝置上的學習紀錄？')){db={};save();if(track)renderAll();alert('已清除本機學習紀錄')}}
+function resetProgress(){if(confirm('確定要清除這台裝置上的學習紀錄？')){db={};localStorage.removeItem('smart_vocab_progress_v5');save();if(track)renderAll();alert('已清除本機學習紀錄')}}
 if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 </script>
 </body></html>
