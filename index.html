@@ -448,7 +448,7 @@ document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>switchPane(b.dataset.
 function renderStats(){
  const a=pool(),now=Date.now(),known=a.filter(x=>peekState(x.w).mastery>=5).length;
  const due=a.filter(x=>peekState(x.w).due>0&&peekState(x.w).due<=now).length;
- const weak=a.filter(x=>{const s=peekState(x.w);return s.bad>s.ok||s.mastery<2}).length;
+ const weak=a.filter(x=>{const s=peekState(x.w);return s.bad>s.ok||((s.seen||0)>0&&s.mastery<2)}).length;
  const ok=a.reduce((sum,x)=>sum+peekState(x.w).ok,0),tot=a.reduce((sum,x)=>sum+peekState(x.w).ok+peekState(x.w).bad,0);
  const pct=a.length?Math.round(known/a.length*100):0;
  knownN.textContent=known; dueN.textContent=due; weakN.textContent=weak; rateN.textContent=tot?Math.round(ok/tot*100)+'%':'0%';
@@ -464,7 +464,7 @@ function renderToday(){
  task('📖','新單字',Math.min(10,fresh),'今天建議學習的全新單字')+
  task('↻','到期複習',Math.min(20,due),'依記憶曲線安排的複習單字')+
  task('📝','錯題重測',Math.min(10,wrong),'加強容易出錯的單字')+
- '<div class="notice" style="margin-top:14px">一般學習只會從已有中文義的字出題；尚未補中文義的官方詞條暫不進題目，因此不會再出現只能聽的單字。</div><button class="primary full" style="margin-top:16px" onclick="startSmart()">▶ 開始今日學習</button></div>';
+ '<div class="notice" style="margin-top:14px">完整字庫目前都已接上中文義；系統會混合新字、到期複習與錯題，並盡量避開最近兩回合重複出現。</div><button class="primary full" style="margin-top:16px" onclick="startSmart()">▶ 開始今日學習</button></div>';
 }
 function task(icon,title,count,desc){return '<div class="task"><div class="task-left"><div class="round">'+icon+'</div><div><b>'+title+'</b><small>'+desc+'</small></div></div><b>'+count+' 題 ›</b></div>'}
 
@@ -657,7 +657,7 @@ function recomputeMastery(x){
  s.mastery=n;return n;
 }
 function updateState(x,ok,type){
- const s=peekState(x.w),now=Date.now();s.last=now;s.seen=Math.max(1,s.seen||0);s.types=s.types||{};
+ const s=state(x.w),now=Date.now();s.last=now;s.seen=Math.max(1,s.seen||0);s.types=s.types||{};
  if(ok){s.ok++;s.types[type]=(s.types[type]||0)+1}
  else{s.bad++;s.types[type]=Math.max(-3,(s.types[type]||0)-1)}
  recomputeMastery(x);
@@ -760,6 +760,6 @@ function startPlacement(){
  ask();
 }
 function resetProgress(){if(confirm('確定要清除這台裝置上的學習紀錄？')){db={};recentSessions={};placementRecent=[];localStorage.removeItem('smart_vocab_progress_v5');localStorage.removeItem('smart_vocab_recent_v1');localStorage.removeItem('smart_vocab_placement_recent_v1');localStorage.removeItem('smart_vocab_last_saved');lastSavedAt=0;save();if(track)renderAll();alert('已清除本機學習紀錄')}}
-if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=12').catch(()=>{}))}
+if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=13').catch(()=>{}))}
 </script>
 </body></html>
