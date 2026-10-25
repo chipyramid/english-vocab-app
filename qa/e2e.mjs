@@ -38,7 +38,7 @@ await assert(session.length===10,'quiz session length '+session.length);
 await assert(new Set(session).size===session.length,'duplicate word within session');
 
 // Answer -> feedback -> next question
-let meta1=await page.locator('.qmeta').textContent();
+let meta1=await page.locator('#quiz .qmeta').textContent();
 const optionTexts=await page.locator('.option').allTextContents();
 await assert(optionTexts.length===4,'normal quiz did not show 4 options: '+optionTexts.length);
 await assert(new Set(optionTexts).size===4,'normal quiz options not distinct: '+optionTexts.join('|'));
@@ -49,12 +49,12 @@ const savedAfterFirst=await page.evaluate(()=>JSON.parse(localStorage.getItem('s
 await assert(Object.values(savedAfterFirst).some(s=>(s.ok||0)+(s.bad||0)>0),'answer was not persisted immediately');
 await assert(await page.getByRole('button',{name:'下一題'}).count()===1,'next button missing');
 await page.getByRole('button',{name:'下一題'}).click();
-let meta2=await page.locator('.qmeta').textContent();
+let meta2=await page.locator('#quiz .qmeta').textContent();
 await assert(meta1!==meta2 && /第 2 \/ 10 題/.test(meta2||''),'did not advance to question 2: '+meta2);
 
 // Answer another question and confirm records refresh
 await page.locator('.option').first().click();
-await page.getByRole('button',{name:'學習紀錄'}).click();
+await page.locator('.nav[data-nav="records"]').click();
 const recordsText=await page.locator('#records').textContent();
 await assert(/已記錄 [1-9]\d* 個單字/.test(recordsText||''),'learning record count not updated: '+recordsText);
 await assert(/本機儲存正常/.test(recordsText||''),'storage status not normal');
