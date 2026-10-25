@@ -275,6 +275,7 @@ let track=localStorage.getItem('smart_vocab_track')||'';
 let learnIndex=0,qstate=null,searchText='';
 let db=JSON.parse(localStorage.getItem('smart_vocab_progress_v5')||'{}');
 let recentSessions=JSON.parse(localStorage.getItem('smart_vocab_recent_v1')||'{}');
+let placementRecent=JSON.parse(localStorage.getItem('smart_vocab_placement_recent_v1')||'[]');
 
 function state(w){
  const scope=(track.startsWith('j')?'J':'H')+'::'+w;
@@ -539,26 +540,75 @@ function renderAll(){
  renderStats();renderToday();renderLearn();renderQuizHome();renderRecords();
 }
 
+function rememberPlacementSession(words){
+ placementRecent.unshift(words);
+ placementRecent=placementRecent.slice(0,2);
+ localStorage.setItem('smart_vocab_placement_recent_v1',JSON.stringify(placementRecent));
+}
+function pickPlacementWord(targetLv,used){
+ const recent=new Set(placementRecent.flat());
+ const distances=[0,1,-1,2,-2,3,-3,4,-4,5,-5];
+ for(const d of distances){
+   const lv=Math.max(1,Math.min(6,targetLv+d));
+   const cand=WORDS.filter(x=>x.lv===lv&&!used.has(x.w)&&!recent.has(x.w));
+   if(cand.length)return shuffle(cand)[0];
+ }
+ for(const d of distances){
+   const lv=Math.max(1,Math.min(6,targetLv+d));
+   const cand=WORDS.filter(x=>x.lv===lv&&!used.has(x.w));
+   if(cand.length)return shuffle(cand)[0];
+ }
+ const any=WORDS.filter(x=>!used.has(x.w));
+ return any.length?shuffle(any)[0]:null;
+}
 function startPlacement(){
  showOnly('placementScreen');setNav('home');
- let lo=1,hi=6,i=0,history=[];
- function ask(){
-  if(i>=12){
+ let lo=1,hi=6,i=0,history=[],used=new Set(),asked=[];
+
+ function finishPlacement(){
+   rememberPlacementSession(asked);
    const avg=history.reduce((s,x)=>s+x,0)/Math.max(1,history.length);
    const rec=avg<2?'j2000':avg<4.5?'h4500':'h6000';
-   placeBar.style.width='100%';
-   placeBox.innerHTML='<div style="text-align:center;padding:15px 0"><h2>試用建議：'+TRACKS[rec].title+'</h2><p class="sub">此結果僅為功能展示，不代表正式字彙量或考試程度；完整字庫完成後才會校準。</p><button class="primary" onclick="selectTrack(\''+rec+'\')">使用這個範圍</button></div>';
-   return;
-  }
-  const lv=Math.round((lo+hi)/2),cand=WORDS.filter(x=>x.lv===lv),x=cand[Math.floor(Math.random()*cand.length)]||WORDS[0];
-  const opts=shuffle([x.m,...shuffle(WORDS.filter(y=>y.w!==x.w).map(y=>y.m)).slice(0,3)]);
-  placeBar.style.width=Math.round(i/12*100)+'%';
-  placeBox.innerHTML='<div class="qmeta">第 '+(i+1)+' / 12 題 · Level '+lv+'</div><div class="qtext">「'+x.w+'」的意思是？</div><div class="options">'+opts.map((o,k)=>'<button class="option">'+String.fromCharCode(65+k)+'　'+o+'</button>').join('')+'</div>';
-  placeBox.querySelectorAll('.option').forEach(b=>b.onclick=()=>{const ok=b.textContent.slice(2).trim()===x.m;history.push(ok?lv:Math.max(1,lv-1));if(ok)lo=Math.min(6,lv+1);else hi=Math.max(1,lv-1);if(lo>hi){lo=Math.max(1,lv-1);hi=Math.min(6,lv+1)}i++;ask()});
+   const bar=document.getElementById('placeBar');
+   const box=document.getElementById('placeBox');
+   if(bar)bar.style.width='100%';
+   if(box)box.innerHTML='<div style="text-align:center;padding:15px 0"><h2>試用建議：'+TRACKS[rec].title+'</h2><p class="sub">本次 12 題使用不同單字，並盡量避開最近兩次程度測驗出過的字。這仍是功能展示，不能視為正式字彙量估計；完整字庫與校準題庫完成後才會作正式分級。</p><button type="button" class="primary" onclick="selectTrack(\''+rec+'\')">使用這個範圍</button></div>';
+ }
+ function ask(){
+   if(i>=12){finishPlacement();return}
+   const lv=Math.round((lo+hi)/2);
+   const x=pickPlacementWord(lv,used);
+   if(!x){finishPlacement();return}
+   used.add(x.w);asked.push(x.w);
+
+   const distractors=shuffle([...new Set(WORDS.filter(y=>y.w!==x.w).map(y=>y.m))]).slice(0,3);
+   const opts=shuffle([x.m,...distractors]);
+   const bar=document.getElementById('placeBar');
+   const box=document.getElementById('placeBox');
+   if(bar)bar.style.width=Math.round(i/12*100)+'%';
+   if(!box)return;
+
+   box.innerHTML='<div class="qmeta">第 '+(i+1)+' / 12 題 · 目標 Level '+lv+'</div><div class="qtext">「'+escHtml(x.w)+'」的意思是？</div>'+
+     '<div class="options">'+opts.map((o,k)=>'<button type="button" class="option" data-v="'+enc(o)+'">'+String.fromCharCode(65+k)+'　'+escHtml(o)+'</button>').join('')+'</div>'+
+     '<div class="sub" style="margin-top:12px">本次測驗不重複出同一個單字。</div>';
+
+   box.querySelectorAll('.option').forEach(btn=>btn.addEventListener('click',()=>{
+     const ok=dec(btn.dataset.v)===x.m;
+     history.push(ok?x.lv:Math.max(1,x.lv-1));
+     if(ok)lo=Math.min(6,Math.max(lo,x.lv+1));
+     else hi=Math.max(1,Math.min(hi,x.lv-1));
+     if(lo>hi){
+       const mid=x.lv;
+       lo=Math.max(1,mid-1);
+       hi=Math.min(6,mid+1);
+     }
+     i++;
+     ask();
+   },{once:true}));
  }
  ask();
 }
-function resetProgress(){if(confirm('確定要清除這台裝置上的學習紀錄？')){db={};recentSessions={};localStorage.removeItem('smart_vocab_progress_v5');localStorage.removeItem('smart_vocab_recent_v1');save();if(track)renderAll();alert('已清除本機學習紀錄')}}
-if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=4').catch(()=>{}))}
+function resetProgress(){if(confirm('確定要清除這台裝置上的學習紀錄？')){db={};recentSessions={};placementRecent=[];localStorage.removeItem('smart_vocab_progress_v5');localStorage.removeItem('smart_vocab_recent_v1');localStorage.removeItem('smart_vocab_placement_recent_v1');save();if(track)renderAll();alert('已清除本機學習紀錄')}}
+if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=5').catch(()=>{}))}
 </script>
 </body></html>
