@@ -379,6 +379,48 @@ function priorityScore(x,recentSet){
 function rankedRandom(a,recentSet){
  return [...a].sort((A,B)=>priorityScore(B,recentSet)-priorityScore(A,recentSet));
 }
+function addUnique(arr,items,limit){
+ for(const x of items){
+   if(arr.length>=limit)break;
+   if(!arr.some(y=>y.w===x.w))arr.push(x);
+ }
+}
+function buildSession(){
+ const a=pool(),now=Date.now(),recent=recentWords(),selected=[];
+ const urgent=a.filter(x=>{
+   const s=state(x.w);
+   return (s.bad||0)>0||(s.due>0&&s.due<=now);
+ });
+ const unseen=a.filter(x=>(state(x.w).seen||0)===0);
+ const nonRecent=a.filter(x=>!recent.has(x.w));
+ const review=a.filter(x=>(state(x.w).seen||0)>0);
+
+ addUnique(selected,rankedRandom(urgent.filter(x=>!recent.has(x.w)),recent),3);
+ addUnique(selected,shuffle(unseen.filter(x=>!recent.has(x.w))),6);
+ addUnique(selected,rankedRandom(nonRecent,recent),10);
+ addUnique(selected,rankedRandom(urgent,recent),10);
+ addUnique(selected,rankedRandom(review,recent),10);
+ addUnique(selected,shuffle(a),10);
+
+ const out=selected.slice(0,Math.min(10,a.length));
+ rememberSession(out);
+ return out;
+}
+function availableTypes(x){
+ if(track.startsWith('j')){
+   return ['en','listen',...(JUNIOR_Q[x.w]?['context']:[]),'spell'];
+ }
+ return ['en',
+   ...((HIGH_Q[x.w]||JUNIOR_Q[x.w])?['context']:[]),
+   ...(COLL_Q[x.w]?['collocation']:[]),
+   ...(DIFF_Q[x.w]?['diff']:[]),
+   'spell'
+ ];
+}
+function weakestType(x){
+ const t=state(x.w).types||{},types=availableTypes(x);
+ return types.slice().sort((a,b)=>(t[a]||0)-(t[b]||0))[0];
+}
 function startSmart(){
  qstate={items:buildSession(),i:0,score:0,lock:false,why:''};
  switchPane('quiz');renderQuestion();
@@ -517,6 +559,6 @@ function startPlacement(){
  ask();
 }
 function resetProgress(){if(confirm('確定要清除這台裝置上的學習紀錄？')){db={};recentSessions={};localStorage.removeItem('smart_vocab_progress_v5');localStorage.removeItem('smart_vocab_recent_v1');save();if(track)renderAll();alert('已清除本機學習紀錄')}}
-if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=3').catch(()=>{}))}
+if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=4').catch(()=>{}))}
 </script>
 </body></html>
