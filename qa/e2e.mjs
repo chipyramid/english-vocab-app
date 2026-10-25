@@ -25,7 +25,7 @@ await assert(data.high===6170,'high count '+data.high);
 await assert(data.emptyJunior===0,'empty junior meanings '+data.emptyJunior);
 await assert(data.emptyHigh===0,'empty high meanings '+data.emptyHigh);
 await assert(data.opencc,'OpenCC did not load');
-await assert(data.able.includes('能夠')||data.able.includes('能够'),'able meaning missing expected sense');
+await assert(data.able.includes('有能力')&&data.able.includes('能幹'),'able meaning did not convert/display as expected: '+data.able);
 
 // Enter high-school track
 await page.getByRole('button',{name:/4,500 學測核心/}).click();
@@ -39,9 +39,14 @@ await assert(new Set(session).size===session.length,'duplicate word within sessi
 
 // Answer -> feedback -> next question
 let meta1=await page.locator('.qmeta').textContent();
+const optionTexts=await page.locator('.option').allTextContents();
+await assert(optionTexts.length===4,'normal quiz did not show 4 options: '+optionTexts.length);
+await assert(new Set(optionTexts).size===4,'normal quiz options not distinct: '+optionTexts.join('|'));
 const firstOption=page.locator('.option').first();
 await firstOption.click();
 await assert(await page.locator('#feedbackBox .feedback').count()===1,'feedback not shown after answer');
+const savedAfterFirst=await page.evaluate(()=>JSON.parse(localStorage.getItem('smart_vocab_progress_v5')||'{}'));
+await assert(Object.values(savedAfterFirst).some(s=>(s.ok||0)+(s.bad||0)>0),'answer was not persisted immediately');
 await assert(await page.getByRole('button',{name:'下一題'}).count()===1,'next button missing');
 await page.getByRole('button',{name:'下一題'}).click();
 let meta2=await page.locator('.qmeta').textContent();
@@ -76,6 +81,7 @@ await page.getByRole('button',{name:/開始程度測驗/}).click();
 const placementWords=[];
 for(let i=1;i<=12;i++){
   const q=await page.locator('#placeBox .qtext').textContent();
+  await assert(/最適合的中文意思/.test(q||''),'placement is not meaning-based: '+q);
   const m=(q||'').match(/「(.+?)」/);
   if(m) placementWords.push(m[1]);
   const opts=page.locator('#placeBox .option');
