@@ -274,6 +274,7 @@ const DIFF_Q={
 let track=localStorage.getItem('smart_vocab_track')||'';
 let learnIndex=0,qstate=null,searchText='';
 let db=JSON.parse(localStorage.getItem('smart_vocab_progress_v5')||'{}');
+let recentSessions=JSON.parse(localStorage.getItem('smart_vocab_recent_v1')||'{}');
 
 function state(w){
  const scope=(track.startsWith('j')?'J':'H')+'::'+w;
@@ -281,6 +282,17 @@ function state(w){
  const s=db[scope];if(s.seen==null)s.seen=0;if(s.selfKnown==null)s.selfKnown=0;if(!s.types)s.types={};return s;
 }
 function save(){localStorage.setItem('smart_vocab_progress_v5',JSON.stringify(db))}
+function recentKey(){return track||'none'}
+function recentWords(){
+ const sessions=recentSessions[recentKey()]||[];
+ return new Set(sessions.flat());
+}
+function rememberSession(items){
+ const key=recentKey(),sessions=recentSessions[key]||[];
+ sessions.unshift(items.map(x=>x.w));
+ recentSessions[key]=sessions.slice(0,2);
+ localStorage.setItem('smart_vocab_recent_v1',JSON.stringify(recentSessions));
+}
 function pool(){return WORDS.filter(TRACKS[track].filter)}
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function setNav(name){document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x.dataset.nav===name))}
@@ -319,7 +331,7 @@ function renderToday(){
  task('📖','新單字',Math.min(10,fresh),'今天建議學習的全新單字')+
  task('↻','到期複習',Math.min(20,due),'依記憶曲線安排的複習單字')+
  task('📝','錯題重測',Math.min(10,wrong),'加強容易出錯的單字')+
- '<button class="primary full" style="margin-top:16px" onclick="startSmart()">▶ 開始今日學習</button></div>';
+ '<div class="notice" style="margin-top:14px">目前仍是驗證樣本字庫；系統會盡量避開最近兩回合已出現的單字，但小字庫仍可能重複。</div><button class="primary full" style="margin-top:16px" onclick="startSmart()">▶ 開始今日學習</button></div>';
 }
 function task(icon,title,count,desc){return '<div class="task"><div class="task-left"><div class="round">'+icon+'</div><div><b>'+title+'</b><small>'+desc+'</small></div></div><b>'+count+' 題 ›</b></div>'}
 
@@ -353,33 +365,19 @@ function masteryHTML(n,x){
 }
 function speakWord(w){if('speechSynthesis'in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(w);u.lang='en-US';u.rate=.85;speechSynthesis.speak(u)}}
 
-function rankWords(a){
- const now=Date.now();
- return [...a].sort((A,B)=>{
-  const a=state(A.w),b=state(B.w);
-  const sa=a.bad*3+(5-a.mastery)*2+((a.due>0&&a.due<=now)?3:0)+((a.seen||0)===0?2:0);
-  const sb=b.bad*3+(5-b.mastery)*2+((b.due>0&&b.due<=now)?3:0)+((b.seen||0)===0?2:0);
-  return sb-sa;
- });
+function priorityScore(x,recentSet){
+ const s=state(x.w),now=Date.now();
+ let score=0;
+ score+=(s.bad||0)*3;
+ score+=(s.due>0&&s.due<=now)?5:0;
+ score+=(s.seen||0)===0?4:0;
+ score+=(5-(s.mastery||0))*1.2;
+ if(recentSet.has(x.w))score-=7;
+ score+=Math.random()*4;
+ return score;
 }
-function availableTypes(x){
- if(track.startsWith('j')) return ['en','listen',...(JUNIOR_Q[x.w]?['context']:[]),'spell'];
- return ['en',...((HIGH_Q[x.w]||JUNIOR_Q[x.w])?['context']:[]),...(COLL_Q[x.w]?['collocation']:[]),...(DIFF_Q[x.w]?['diff']:[]),'spell'];
-}
-function weakestType(x){
- const t=state(x.w).types||{},types=availableTypes(x);
- return types.slice().sort((a,b)=>(t[a]||0)-(t[b]||0))[0];
-}
-function addUnique(arr,items,limit){
- for(const x of items){if(arr.length>=limit)break;if(!arr.some(y=>y.w===x.w))arr.push(x)}
-}
-function buildSession(){
- const a=pool(),now=Date.now(),selected=[];
- addUnique(selected,rankWords(a.filter(x=>state(x.w).bad>0)),3);
- addUnique(selected,rankWords(a.filter(x=>state(x.w).due>0&&state(x.w).due<=now)),7);
- addUnique(selected,rankWords(a.filter(x=>(state(x.w).seen||0)===0)),10);
- addUnique(selected,rankWords(a),10);
- return selected.slice(0,10);
+function rankedRandom(a,recentSet){
+ return [...a].sort((A,B)=>priorityScore(B,recentSet)-priorityScore(A,recentSet));
 }
 function startSmart(){
  qstate={items:buildSession(),i:0,score:0,lock:false,why:''};
@@ -388,7 +386,7 @@ function startSmart(){
 function renderQuizHome(){
  const junior=track.startsWith('j');
  quiz.innerHTML='<div class="card"><h2>智慧測驗</h2><p class="sub">'+
- (junior?'國中版：字義、聽音、生活語境與拼字；不以艱深近義字作為主要負擔。':'高中版：字義、學測型語境、搭配／易混字與拼字輸出。')+
+ (junior?'國中版：字義、聽音、生活語境與拼字；同時混合新字、到期字與錯題。':'高中版：字義、學測型語境、搭配／易混字與拼字輸出；同時混合新字、到期字與錯題。')+
  '</p><button class="primary full" onclick="startSmart()">開始 10 題</button></div>'
 }
 function typeLabel(t){return {en:'字義辨識',listen:'聽音辨字',context:'語境選字',collocation:'搭配詞',diff:'易混字辨析',spell:'拼字輸出'}[t]||t}
@@ -518,7 +516,7 @@ function startPlacement(){
  }
  ask();
 }
-function resetProgress(){if(confirm('確定要清除這台裝置上的學習紀錄？')){db={};localStorage.removeItem('smart_vocab_progress_v5');save();if(track)renderAll();alert('已清除本機學習紀錄')}}
+function resetProgress(){if(confirm('確定要清除這台裝置上的學習紀錄？')){db={};recentSessions={};localStorage.removeItem('smart_vocab_progress_v5');localStorage.removeItem('smart_vocab_recent_v1');save();if(track)renderAll();alert('已清除本機學習紀錄')}}
 if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=3').catch(()=>{}))}
 </script>
 </body></html>
