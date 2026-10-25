@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>升學英文單字測驗</title>
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;background:#f6f7fb;color:#18202a}
+.app{max-width:860px;margin:auto;padding:18px}
+.card{background:#fff;border:1px solid #e5e8ef;border-radius:18px;padding:20px;margin-bottom:14px;box-shadow:0 8px 24px rgba(0,0,0,.06)}
+h1{font-size:25px;margin:0 0 6px}.sub{color:#6d7683;font-size:13px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.choice{padding:22px;border:2px solid #e5e8ef;border-radius:16px;background:#fff;cursor:pointer;text-align:left}
+.choice b{font-size:22px;display:block;margin-bottom:6px}.choice span{color:#6d7683}
+button{border:0;border-radius:11px;padding:11px 14px;font-size:15px;cursor:pointer}.primary{background:#3559e0;color:#fff}.secondary{background:#e9edf5;color:#344054}
+.tabs{display:flex;gap:8px;overflow:auto;margin:14px 0}.tab{white-space:nowrap}.tab.active{background:#18202a;color:#fff}
+.hidden{display:none}.word{text-align:center;font-size:40px;font-weight:800;margin:45px 0 10px}.meaning{text-align:center;font-size:24px;margin:15px 0}.example{text-align:center;color:#5d6673;margin-bottom:24px}
+.options{display:grid;gap:10px}.option{width:100%;text-align:left;background:#fff;border:1px solid #d9dee8;padding:14px}.correct{background:#e9f7ef;border-color:#15875a}.wrong{background:#fdeaea;border-color:#c43d3d}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.stat{background:#fff;border:1px solid #e5e8ef;border-radius:12px;padding:10px;text-align:center}.stat b{display:block;font-size:20px}.stat span{font-size:11px;color:#6d7683}
+.list{display:grid;gap:8px}.item{background:#fff;border:1px solid #e5e8ef;border-radius:12px;padding:12px;display:flex;justify-content:space-between}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.word{font-size:34px}}
+</style>
+</head>
+<body><div class="app">
+<h1>升學英文單字測驗</h1><div class="sub">先選國中／高中，再進入對應考試分類</div>
+
+<div id="home" class="card">
+<h2>選擇學習階段</h2>
+<div class="grid">
+<button class="choice" onclick="stage('junior')"><b>國中</b><span>國中基礎字彙、會考</span></button>
+<button class="choice" onclick="stage('senior')"><b>高中</b><span>學測、分科進階字彙</span></button>
+</div></div>
+
+<div id="examSel" class="card hidden"><h2 id="stageTitle"></h2><div id="examGrid" class="grid"></div><div style="margin-top:12px"><button class="secondary" onclick="show('home')">返回</button></div></div>
+
+<div id="main" class="hidden">
+<div class="card"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><h2 id="examTitle" style="margin-bottom:4px"></h2><div id="examDesc" class="sub"></div></div><button class="secondary" onclick="show('examSel')">切換分類</button></div>
+<div class="stats"><div class="stat"><b id="total">0</b><span>單字數</span></div><div class="stat"><b id="wrongN">0</b><span>錯題</span></div><div class="stat"><b id="rate">0%</b><span>正確率</span></div></div></div>
+
+<div class="tabs">
+<button class="tab active" onclick="tab('study',this)">背單字</button>
+<button class="tab" onclick="tab('quiz',this)">測驗</button>
+<button class="tab" onclick="tab('wrong',this)">錯題複習</button>
+<button class="tab" onclick="tab('list',this)">單字表</button>
+</div>
+
+<div id="study" class="pane"></div>
+<div id="quiz" class="pane hidden"></div>
+<div id="wrong" class="pane hidden"></div>
+<div id="list" class="pane hidden"></div>
+</div>
+</div>
+
+<script>
+const BANK={
+junior_basic:{stage:'junior',title:'國中基礎字彙',desc:'七至九年級常用核心字彙',words:[
+['answer','回答；答案','Please answer the question.'],['because','因為','I stayed home because I was sick.'],['different','不同的','These books are different.'],['favorite','最喜愛的','Blue is my favorite color.'],['important','重要的','Sleep is important for health.'],['language','語言','English is an international language.'],['practice','練習','Practice makes progress.'],['question','問題','I have a question.'],['usually','通常','I usually get up at six.'],['weather','天氣','The weather is nice today.']]},
+junior_exam:{stage:'junior',title:'國中會考',desc:'會考常見核心字彙',words:[
+['accept','接受','She accepted the invitation.'],['advice','建議','My teacher gave me useful advice.'],['although','雖然','Although it was raining, we went out.'],['borrow','借入','May I borrow your pen?'],['careful','小心的','Be careful when crossing the street.'],['decide','決定','We decided to take the bus.'],['enough','足夠的','We have enough time.'],['environment','環境','We should protect the environment.'],['experience','經驗','It was a great experience.'],['improve','改善；進步','Practice can improve your English.'],['prepare','準備','I need to prepare for the test.'],['receive','收到','I received a letter yesterday.'],['successful','成功的','The event was very successful.'],['through','穿過；透過','We walked through the park.'],['without','沒有','He left without saying goodbye.']]},
+gsat:{stage:'senior',title:'高中學測',desc:'學測常見中高頻字彙',words:[
+['abandon','放棄；遺棄','They abandoned the original plan.'],['accurate','精確的','The report provides accurate data.'],['approach','方法；接近','We need a different approach.'],['consequence','後果','Every decision has consequences.'],['considerable','相當大的','The project requires considerable effort.'],['demonstrate','證明；示範','The study demonstrates the effect.'],['essential','必要的','Water is essential to life.'],['factor','因素','Cost is an important factor.'],['maintain','維持','It is difficult to maintain balance.'],['occur','發生','The accident occurred at night.'],['potential','潛在的','The plan has potential benefits.'],['significant','重大的','There was a significant increase.'],['specific','特定的','Please give a specific example.'],['sufficient','足夠的','We do not have sufficient evidence.'],['transform','轉變','Technology transformed the industry.']]},
+advanced:{stage:'senior',title:'高中分科／進階',desc:'較進階閱讀與學術字彙',words:[
+['allocate','分配','The company allocated more resources.'],['coherent','連貫的','She presented a coherent argument.'],['compensate','補償','The company compensated the customers.'],['consecutive','連續的','He won three consecutive games.'],['controversial','具爭議的','The proposal remains controversial.'],['deteriorate','惡化','Conditions may deteriorate rapidly.'],['distinguish','區分','Distinguish fact from opinion.'],['eliminate','消除','The new process eliminates waste.'],['inevitable','不可避免的','Some change is inevitable.'],['interpret','解釋；詮釋','People may interpret the result differently.'],['preliminary','初步的','These are preliminary findings.'],['substantial','大量的；重大的','The firm made a substantial investment.'],['valid','有效的；合理的','The argument remains valid.']]}
+};
+let current='', idx=0, quiz=null;
+let prog=JSON.parse(localStorage.getItem('exam_vocab_progress')||'{}');
+function show(id){['home','examSel','main'].forEach(x=>document.getElementById(x).classList.add('hidden'));document.getElementById(id).classList.remove('hidden')}
+function stage(s){document.getElementById('stageTitle').textContent=s==='junior'?'國中｜選擇分類':'高中｜選擇分類';document.getElementById('examGrid').innerHTML=Object.entries(BANK).filter(([k,v])=>v.stage===s).map(([k,v])=>'<button class="choice" onclick="choose(\''+k+'\')"><b>'+v.title+'</b><span>'+v.desc+'</span></button>').join('');show('examSel')}
+function choose(k){current=k;if(!prog[k])prog[k]={wrong:{},correct:0,total:0};save();document.getElementById('examTitle').textContent=BANK[k].title;document.getElementById('examDesc').textContent=BANK[k].desc;idx=0;render();show('main')}
+function save(){localStorage.setItem('exam_vocab_progress',JSON.stringify(prog))}
+function p(){return prog[current]} function b(){return BANK[current]}
+function renderStats(){document.getElementById('total').textContent=b().words.length;document.getElementById('wrongN').textContent=Object.keys(p().wrong).filter(x=>p().wrong[x]>0).length;document.getElementById('rate').textContent=p().total?Math.round(p().correct/p().total*100)+'%':'0%'}
+function render(){renderStats();renderStudy();renderList();renderWrong();document.getElementById('quiz').innerHTML='<div class="card"><h3>10 題測驗</h3><button class="primary" onclick="startQuiz(false)">開始測驗</button></div>'}
+function renderStudy(){let w=b().words[idx%b().words.length];document.getElementById('study').innerHTML='<div class="card"><div class="word">'+w[0]+'</div><div id="m" class="meaning hidden">'+w[1]+'</div><div id="e" class="example hidden">'+w[2]+'</div><div style="text-align:center"><button id="reveal" class="primary" onclick="reveal()">顯示答案</button> <button class="secondary" onclick="nextWord()">下一個</button></div></div>'}
+function reveal(){document.getElementById('m').classList.remove('hidden');document.getElementById('e').classList.remove('hidden');document.getElementById('reveal').classList.add('hidden')}
+function nextWord(){idx=(idx+1)%b().words.length;renderStudy()}
+function renderList(){document.getElementById('list').innerHTML='<div class="list">'+b().words.map(w=>'<div class="item"><b>'+w[0]+'</b><span>'+w[1]+'</span></div>').join('')+'</div>'}
+function renderWrong(){document.getElementById('wrong').innerHTML='<div class="card"><h3>錯題複習</h3><button class="primary" onclick="startQuiz(true)">開始錯題測驗</button></div>'}
+function tab(id,btn){document.querySelectorAll('.pane').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}
+function sh(a){return [...a].sort(()=>Math.random()-.5)}
+function startQuiz(wrongOnly){let pool=b().words;if(wrongOnly)pool=pool.filter(w=>(p().wrong[w[0]]||0)>0);if(!pool.length){document.getElementById(wrongOnly?'wrong':'quiz').innerHTML='<div class="card">目前沒有錯題。</div>';return}quiz={wrongOnly,items:sh(pool).slice(0,Math.min(10,pool.length)),i:0,score:0};renderQ()}
+function renderQ(){let w=quiz.items[quiz.i], distract=sh(b().words.filter(x=>x[0]!==w[0])).slice(0,3).map(x=>x[1]),opts=sh([w[1],...distract]),target=quiz.wrongOnly?'wrong':'quiz';document.getElementById(target).innerHTML='<div class="card"><div class="sub">第 '+(quiz.i+1)+' / '+quiz.items.length+' 題</div><h2>「'+w[0]+'」的中文意思是？</h2><div class="options">'+opts.map(o=>'<button class="option" onclick="answer(this,\''+o.replace(/'/g,"\\'")+'\')">'+o+'</button>').join('')+'</div><div id="fb"></div></div>'}
+function answer(btn,val){let w=quiz.items[quiz.i],ok=val===w[1];document.querySelectorAll('.option').forEach(x=>{if(x.textContent===w[1])x.classList.add('correct');else if(x===btn)x.classList.add('wrong');x.disabled=true});if(ok){quiz.score++;p().correct++;if(p().wrong[w[0]])p().wrong[w[0]]=Math.max(0,p().wrong[w[0]]-1)}else p().wrong[w[0]]=(p().wrong[w[0]]||0)+1;p().total++;save();renderStats();document.getElementById('fb').innerHTML='<p>'+(ok?'答對了。':'答錯了。')+' '+w[0]+' = '+w[1]+'</p><button class="primary" onclick="nextQ()">下一題</button>'}
+function nextQ(){quiz.i++;if(quiz.i>=quiz.items.length){let t=quiz.wrongOnly?'wrong':'quiz';document.getElementById(t).innerHTML='<div class="card" style="text-align:center"><h2>'+quiz.score+' / '+quiz.items.length+'</h2><p>本次測驗完成</p><button class="primary" onclick="startQuiz('+quiz.wrongOnly+')">再測一次</button></div>'}else renderQ()}
+</script></body></html>
