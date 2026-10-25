@@ -271,18 +271,73 @@ const DIFF_Q={
  deteriorate:{q:'哪個動詞表示「變得更糟、惡化」？',c:'deteriorate',o:['deteriorate','improve','maintain','guarantee'],why:'deteriorate 表示「惡化」；improve 則是「改善」。'}
 };
 
+function loadJSON(key,fallback){
+ try{
+   const raw=localStorage.getItem(key);
+   return raw?JSON.parse(raw):fallback;
+ }catch(e){return fallback}
+}
+function safeSet(key,value){
+ try{
+   localStorage.setItem(key,value);
+   return localStorage.getItem(key)===value;
+ }catch(e){return false}
+}
+let storageOK=true,lastSavedAt=Number(localStorage.getItem('smart_vocab_last_saved')||0);
 let track=localStorage.getItem('smart_vocab_track')||'';
 let learnIndex=0,qstate=null,searchText='';
-let db=JSON.parse(localStorage.getItem('smart_vocab_progress_v5')||'{}');
-let recentSessions=JSON.parse(localStorage.getItem('smart_vocab_recent_v1')||'{}');
-let placementRecent=JSON.parse(localStorage.getItem('smart_vocab_placement_recent_v1')||'[]');
+let db=loadJSON('smart_vocab_progress_v5',{});
+let recentSessions=loadJSON('smart_vocab_recent_v1',{});
+let placementRecent=loadJSON('smart_vocab_placement_recent_v1',[]);
+
+function mergeLegacyRecord(target,src){
+ if(!src)return target;
+ if((target.ok||0)+(target.bad||0)+(target.seen||0)>0)return target;
+ target.ok=Number(src.ok||0);
+ target.bad=Number(src.bad||0);
+ target.seen=Number(src.seen||((src.ok||0)+(src.bad||0)>0?1:0));
+ target.selfKnown=Number(src.selfKnown||0);
+ target.last=Number(src.last||0);
+ target.due=Number(src.due||0);
+ target.mastery=Number(src.mastery||src.m||0);
+ target.types=Object.assign({},src.types||{});
+ return target;
+}
+function migrateLegacyProgress(){
+ if(localStorage.getItem('smart_vocab_v4_migrated_to_v5')==='1')return;
+ const old=loadJSON('smart_vocab_progress_v4',{});
+ let changed=false;
+ for(const x of WORDS){
+   const src=old[x.w];
+   if(!src)continue;
+   if(x.j){
+     const jk='J::'+x.w;
+     if(!db[jk])db[jk]={mastery:0,ok:0,bad:0,due:0,last:0,seen:0,selfKnown:0,types:{}};
+     const before=JSON.stringify(db[jk]);mergeLegacyRecord(db[jk],src);if(JSON.stringify(db[jk])!==before)changed=true;
+   }
+   const hk='H::'+x.w;
+   if(!db[hk])db[hk]={mastery:0,ok:0,bad:0,due:0,last:0,seen:0,selfKnown:0,types:{}};
+   const beforeH=JSON.stringify(db[hk]);mergeLegacyRecord(db[hk],src);if(JSON.stringify(db[hk])!==beforeH)changed=true;
+ }
+ if(changed)safeSet('smart_vocab_progress_v5',JSON.stringify(db));
+ safeSet('smart_vocab_v4_migrated_to_v5','1');
+}
+migrateLegacyProgress();
 
 function state(w){
  const scope=(track.startsWith('j')?'J':'H')+'::'+w;
  if(!db[scope]) db[scope]={mastery:0,ok:0,bad:0,due:0,last:0,seen:0,selfKnown:0,types:{en:0,listen:0,context:0,collocation:0,diff:0,spell:0}};
  const s=db[scope];if(s.seen==null)s.seen=0;if(s.selfKnown==null)s.selfKnown=0;if(!s.types)s.types={};return s;
 }
-function save(){localStorage.setItem('smart_vocab_progress_v5',JSON.stringify(db))}
+function save(){
+ const payload=JSON.stringify(db);
+ storageOK=safeSet('smart_vocab_progress_v5',payload);
+ if(storageOK){
+   lastSavedAt=Date.now();
+   safeSet('smart_vocab_last_saved',String(lastSavedAt));
+ }
+ return storageOK;
+}
 function recentKey(){return track||'none'}
 function recentWords(){
  const sessions=recentSessions[recentKey()]||[];
@@ -292,19 +347,19 @@ function rememberSession(items){
  const key=recentKey(),sessions=recentSessions[key]||[];
  sessions.unshift(items.map(x=>x.w));
  recentSessions[key]=sessions.slice(0,2);
- localStorage.setItem('smart_vocab_recent_v1',JSON.stringify(recentSessions));
+ safeSet('smart_vocab_recent_v1',JSON.stringify(recentSessions));
 }
 function pool(){return WORDS.filter(TRACKS[track].filter)}
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function setNav(name){document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x.dataset.nav===name))}
 function showOnly(id){['homeScreen','appScreen','placementScreen','settingsScreen'].forEach(x=>document.getElementById(x).classList.add('hidden'));document.getElementById(id).classList.remove('hidden')}
 function goHome(){showOnly('homeScreen');setNav('home')}
-function selectTrack(t){track=t;localStorage.setItem('smart_vocab_track',t);renderAll();showOnly('appScreen');switchPane('today');setNav('today')}
+function selectTrack(t){track=t;safeSet('smart_vocab_track',t);renderAll();showOnly('appScreen');switchPane('today');setNav('today')}
 function bottomNav(n){
  if(n==='home'){goHome();return}
  if(n==='settings'){showOnly('settingsScreen');setNav('settings');return}
  if(!track){goHome();return}
- showOnly('appScreen');switchPane(n==='records'?'records':'today');setNav(n)
+ showOnly('appScreen');if(n==='records')renderRecords();switchPane(n==='records'?'records':'today');setNav(n)
 }
 function switchPane(id){
  document.querySelectorAll('.pane').forEach(x=>x.classList.add('hidden'));
@@ -497,7 +552,7 @@ function checkSpell(){
  finishAnswer(val===x.w.toLowerCase(),'spell',x.w);
 }
 function finishAnswer(ok,type,correct){
- const x=qstate.items[qstate.i];updateState(x,ok,type);if(ok)qstate.score++;save();renderStats();
+ const x=qstate.items[qstate.i];updateState(x,ok,type);if(ok)qstate.score++;save();renderStats();renderRecords();
  const box=document.getElementById('feedbackBox');
  if(box)box.innerHTML='<div class="feedback"><b style="color:'+(ok?'#148557':'#b63b45')+'">'+(ok?'✓ 答對了！':'答錯了')+'</b><div style="margin-top:8px"><b>'+escHtml(x.w)+'</b>　'+escHtml(x.p)+'　'+escHtml(x.m)+'</div><div class="sub" style="margin-top:6px">'+escHtml(x.e)+'</div>'+(COLLOCATIONS[x.w]?'<div class="sub" style="margin-top:7px"><b>常用搭配：</b>'+escHtml(COLLOCATIONS[x.w])+'</div>':'')+(qstate.why?'<div class="notice" style="margin-top:9px"><b>老師解析：</b>'+escHtml(qstate.why)+'</div>':'')+masteryHTML(state(x.w).mastery,x)+'<button type="button" class="primary full" style="margin-top:14px" onclick="nextQuestion()">下一題</button></div>';
 }
@@ -527,12 +582,31 @@ function updateState(x,ok,type){
  s.due=now+(ok?days:1)*86400000;
 }
 
+function formatSavedTime(ts){
+ if(!ts)return '尚未儲存';
+ try{return new Date(ts).toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}
+ catch(e){return '已儲存'}
+}
 function renderRecords(){
  const a=pool();
- records.innerHTML='<div class="card"><h2>學習紀錄</h2><input class="search" placeholder="搜尋單字…" oninput="searchText=this.value.toLowerCase();renderRecords()"><div class="list" style="margin-top:12px">'+
- a.filter(x=>(x.w+' '+x.m).toLowerCase().includes(searchText)).sort((A,B)=>state(B.w).bad-state(A.w).bad||state(A.w).mastery-state(B.w).mastery).map(x=>{
-  const s=state(x.w);return '<div class="item"><div><b>'+x.w+'</b><small>'+x.m+'</small></div><div class="mini">能力 '+recomputeMastery(x)+'/5<br>答對 '+s.ok+'・答錯 '+s.bad+'</div></div>'
- }).join('')+'</div></div>';
+ const rows=a.map(x=>({x,s:state(x.w)}));
+ const studied=rows.filter(r=>(r.s.seen||0)>0||(r.s.ok||0)>0||(r.s.bad||0)>0);
+ const filtered=rows.filter(r=>(r.x.w+' '+r.x.m).toLowerCase().includes(searchText))
+   .sort((A,B)=>(B.s.last||0)-(A.s.last||0)||(B.s.bad||0)-(A.s.bad||0));
+ const status=storageOK
+   ?'<span class="badge" style="background:#e8f7ef;color:#137b50">✓ 本機儲存正常</span>'
+   :'<span class="badge" style="background:#feedef;color:#b83b45">⚠ 本機儲存失敗</span>';
+
+ records.innerHTML='<div class="card"><h2>學習紀錄</h2>'+
+   '<div class="notice" style="margin-bottom:12px"><b>已記錄 '+studied.length+' 個單字</b><br>最後儲存：'+formatSavedTime(lastSavedAt)+'　'+status+'<br><span class="sub">每答一題會立即寫入這台裝置；重新開啟同一個網站仍會保留。</span></div>'+
+   '<input class="search" placeholder="搜尋單字…" value="'+escHtml(searchText)+'" oninput="searchText=this.value.toLowerCase();renderRecords()">'+
+   '<div class="list" style="margin-top:12px">'+
+   filtered.map(({x,s})=>{
+     const attempted=(s.ok||0)+(s.bad||0);
+     const when=s.last?formatSavedTime(s.last):'尚未學習';
+     return '<div class="item"><div><b>'+escHtml(x.w)+'</b><small>'+escHtml(x.m)+'</small><small>'+when+'</small></div>'+
+       '<div class="mini">能力 '+recomputeMastery(x)+'/5<br>答對 '+(s.ok||0)+'・答錯 '+(s.bad||0)+(attempted===0?'<br>未測驗':'')+'</div></div>'
+   }).join('')+'</div></div>';
 }
 function renderAllExceptQuiz(){renderStats();renderToday();renderLearn();renderRecords()}
 function renderAll(){
@@ -543,7 +617,7 @@ function renderAll(){
 function rememberPlacementSession(words){
  placementRecent.unshift(words);
  placementRecent=placementRecent.slice(0,2);
- localStorage.setItem('smart_vocab_placement_recent_v1',JSON.stringify(placementRecent));
+ safeSet('smart_vocab_placement_recent_v1',JSON.stringify(placementRecent));
 }
 function pickPlacementWord(targetLv,used){
  const recent=new Set(placementRecent.flat());
@@ -608,7 +682,7 @@ function startPlacement(){
  }
  ask();
 }
-function resetProgress(){if(confirm('確定要清除這台裝置上的學習紀錄？')){db={};recentSessions={};placementRecent=[];localStorage.removeItem('smart_vocab_progress_v5');localStorage.removeItem('smart_vocab_recent_v1');localStorage.removeItem('smart_vocab_placement_recent_v1');save();if(track)renderAll();alert('已清除本機學習紀錄')}}
-if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=5').catch(()=>{}))}
+function resetProgress(){if(confirm('確定要清除這台裝置上的學習紀錄？')){db={};recentSessions={};placementRecent=[];localStorage.removeItem('smart_vocab_progress_v5');localStorage.removeItem('smart_vocab_recent_v1');localStorage.removeItem('smart_vocab_placement_recent_v1');localStorage.removeItem('smart_vocab_last_saved');lastSavedAt=0;save();if(track)renderAll();alert('已清除本機學習紀錄')}}
+if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=6').catch(()=>{}))}
 </script>
 </body></html>
