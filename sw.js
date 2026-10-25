@@ -1,4 +1,4 @@
-const CACHE='smart-vocab-v3';
+const CACHE='smart-vocab-v5';
 const ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg'];
 
 self.addEventListener('install',event=>{
