@@ -104,7 +104,7 @@ h1,h2,h3,p{margin-top:0}h2{font-size:22px}.hidden{display:none!important}
    <h2>資料與來源</h2>
    <div class="source-row"><div><b>國中字彙架構</b><div class="sub">課綱要求國中至少學會並能應用基本 1,200 字；2,000 為擴充參考範圍，不等於會考固定命題字彙。</div></div><span class="badge">官方依據</span></div>
    <div class="source-row"><div><b>高中字彙架構</b><div class="sub">大考中心《高中英文參考詞彙表》分 Level 1–6；學測以高中常用約 4,500 字詞為主，Level 1–5 可作參考，仍可能出現更高級詞彙。</div></div><span class="badge">官方依據</span></div>
-   <div class="source-row"><div><b>目前 App 字庫</b><div class="sub">官方字量已接入：國中 2,066 個去重可測字形、高中 6,170 個字形。中文義、例句、搭配與解析只在已複核詞條顯示，未複核者不自行生成答案。</div></div><span class="badge" style="background:#fff3dc;color:#8a5d00">測試</span></div>
+   <div class="source-row"><div><b>目前 App 字庫</b><div class="sub">官方字量已接入：國中 2,066 個去重字形、高中 6,170 個字形。一般學習目前只使用已有 ECDICT 中文義的詞條；尚缺中文義的詞條暫不出題。</div></div><span class="badge" style="background:#fff3dc;color:#8a5d00">測試</span></div>
  </div>
  <div class="card">
    <h2>學習資料</h2>
@@ -123,6 +123,8 @@ h1,h2,h3,p{margin-top:0}h2{font-size:22px}.hidden{display:none!important}
 
 <script src="data/junior_official.js?v=1"></script>
 <script src="data/high_official.js?v=1"></script>
+<script src="data/meanings_cn.js?v=1"></script>
+<script src="https://cdn.jsdelivr.net/npm/opencc-js@1.4.2/dist/umd/full.js"></script>
 <script>
 const DETAIL_WORDS=[
  {w:'answer',m:'回答；答案',p:'n./v.',e:'Please answer the question.',lv:1,j:1},
@@ -176,28 +178,36 @@ const DETAIL_WORDS=[
 ];
 
 const DETAIL_MAP=new Map(DETAIL_WORDS.map(x=>[x.w.toLowerCase(),x]));
+const MEANING_MAP=window.WORD_MEANINGS_CN||{};
+const CN2TW=(window.OpenCC&&OpenCC.Converter)?OpenCC.Converter({from:'cn',to:'tw'}):(s=>s);
+function toTW(s){try{return s?CN2TW(String(s)):''}catch(e){return String(s||'')}}
+function dictInfo(w){return MEANING_MAP[String(w).toLowerCase()]||null}
 function mergeJuniorEntry(x){
- const d=DETAIL_MAP.get(String(x.w).toLowerCase());
+ const key=String(x.w).toLowerCase(),d=DETAIL_MAP.get(key),md=dictInfo(key);
  return {
    w:x.w,
    j:x.band,
    lv:d?.lv??null,
    p:d?.p||'',
-   m:d?.m||'',
+   ph:md?.ph||'',
+   m:d?.m||toTW(md?.m||''),
    e:d?.e||'',
    verifiedDetail:!!d,
+   hasDictionaryMeaning:!!md,
    source:'junior'
  };
 }
 function mergeHighEntry(x){
- const d=DETAIL_MAP.get(String(x.w).toLowerCase());
+ const key=String(x.w).toLowerCase(),d=DETAIL_MAP.get(key),md=dictInfo(key);
  return {
    w:x.w,
    lv:Number(x.lv),
    p:x.p||d?.p||'',
-   m:d?.m||'',
+   ph:md?.ph||'',
+   m:d?.m||toTW(md?.m||''),
    e:d?.e||'',
    verifiedDetail:!!d,
+   hasDictionaryMeaning:!!md,
    source:'high'
  };
 }
@@ -381,9 +391,12 @@ function rememberSession(items){
  recentSessions[key]=sessions.slice(0,2);
  safeSet('smart_vocab_recent_v1',JSON.stringify(recentSessions));
 }
-function pool(){
+function catalogPool(){
  const base=track.startsWith('j')?JUNIOR_WORDS:HIGH_WORDS;
  return base.filter(TRACKS[track].filter);
+}
+function pool(){
+ return catalogPool().filter(x=>x.m);
 }
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function setNav(name){document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x.dataset.nav===name))}
@@ -422,7 +435,7 @@ function renderToday(){
  task('📖','新單字',Math.min(10,fresh),'今天建議學習的全新單字')+
  task('↻','到期複習',Math.min(20,due),'依記憶曲線安排的複習單字')+
  task('📝','錯題重測',Math.min(10,wrong),'加強容易出錯的單字')+
- '<div class="notice" style="margin-top:14px">目前仍是驗證樣本字庫；系統會盡量避開最近兩回合已出現的單字，但小字庫仍可能重複。</div><button class="primary full" style="margin-top:16px" onclick="startSmart()">▶ 開始今日學習</button></div>';
+ '<div class="notice" style="margin-top:14px">一般學習只會從已有中文義的字出題；尚未補中文義的官方詞條暫不進題目，因此不會再出現只能聽的單字。</div><button class="primary full" style="margin-top:16px" onclick="startSmart()">▶ 開始今日學習</button></div>';
 }
 function task(icon,title,count,desc){return '<div class="task"><div class="task-left"><div class="round">'+icon+'</div><div><b>'+title+'</b><small>'+desc+'</small></div></div><b>'+count+' 題 ›</b></div>'}
 
@@ -430,9 +443,10 @@ function renderLearn(){
  const a=pool(); if(!a.length)return;
  const x=a[learnIndex%a.length],s=state(x.w);
  const levelBadge=track.startsWith('j')?(x.j===1?'基本 1,200':'擴充 800'):'Level '+x.lv;
- const detail=x.m
-   ?'<div class="meaning">'+escHtml(x.m)+'</div>'+(x.e?'<div class="example">'+escHtml(x.e)+'</div>':'')+(COLLOCATIONS[x.w]?'<div class="notice"><b>常用搭配：</b>'+escHtml(COLLOCATIONS[x.w])+'</div>':'')
-   :'<div class="notice" style="margin-top:20px"><b>官方字庫詞條</b><br>中文義尚未逐筆複核，因此本字目前只進入發音、辨字與拼字練習，不顯示未驗證翻譯。</div>';
+ const detail='<div class="meaning">'+escHtml(x.m)+'</div>'+
+   (x.ph?'<div class="pos">/'+escHtml(x.ph)+'/</div>':'')+
+   (x.e?'<div class="example">'+escHtml(x.e)+'</div>':'')+
+   (COLLOCATIONS[x.w]?'<div class="notice"><b>常用搭配：</b>'+escHtml(COLLOCATIONS[x.w])+'</div>':'');
  learn.innerHTML='<div class="card"><div style="display:flex;justify-content:space-between"><span class="badge">'+levelBadge+'</span><button class="ghost" onclick="speakWord(\''+String(x.w).replace(/'/g,"\\'")+'\')">🔊 裝置發音</button></div>'+
  '<div class="word">'+escHtml(x.w)+'</div><div class="pos">'+escHtml(x.p||'')+'</div>'+
  '<div id="learnAnswer" class="hidden">'+detail+'</div>'+
@@ -501,8 +515,7 @@ function buildSession(){
  return out;
 }
 function availableTypes(x){
- const types=['listen','spell'];
- if(x.m)types.unshift('en');
+ const types=['en','listen','spell'];
  if(track.startsWith('j')){
    if(JUNIOR_Q[x.w])types.push('context');
  }else{
@@ -595,7 +608,7 @@ function checkSpell(){
 function finishAnswer(ok,type,correct){
  const x=qstate.items[qstate.i];updateState(x,ok,type);if(ok)qstate.score++;save();renderStats();renderRecords();
  const box=document.getElementById('feedbackBox');
- if(box)box.innerHTML='<div class="feedback"><b style="color:'+(ok?'#148557':'#b63b45')+'">'+(ok?'✓ 答對了！':'答錯了')+'</b><div style="margin-top:8px"><b>'+escHtml(x.w)+'</b>'+(x.p?'　'+escHtml(x.p):'')+(x.m?'　'+escHtml(x.m):'')+'</div>'+(x.e?'<div class="sub" style="margin-top:6px">'+escHtml(x.e)+'</div>':'')+(COLLOCATIONS[x.w]?'<div class="sub" style="margin-top:7px"><b>常用搭配：</b>'+escHtml(COLLOCATIONS[x.w])+'</div>':'')+(qstate.why?'<div class="notice" style="margin-top:9px"><b>老師解析：</b>'+escHtml(qstate.why)+'</div>':'')+(!x.m?'<div class="sub" style="margin-top:7px">此字的中文義尚未逐筆複核。</div>':'')+masteryHTML(state(x.w).mastery,x)+'<button type="button" class="primary full" style="margin-top:14px" onclick="nextQuestion()">下一題</button></div>';
+ if(box)box.innerHTML='<div class="feedback"><b style="color:'+(ok?'#148557':'#b63b45')+'">'+(ok?'✓ 答對了！':'答錯了')+'</b><div style="margin-top:8px"><b>'+escHtml(x.w)+'</b>'+(x.p?'　'+escHtml(x.p):'')+(x.m?'　'+escHtml(x.m):'')+'</div>'+(x.e?'<div class="sub" style="margin-top:6px">'+escHtml(x.e)+'</div>':'')+(COLLOCATIONS[x.w]?'<div class="sub" style="margin-top:7px"><b>常用搭配：</b>'+escHtml(COLLOCATIONS[x.w])+'</div>':'')+(qstate.why?'<div class="notice" style="margin-top:9px"><b>老師解析：</b>'+escHtml(qstate.why)+'</div>':'')+masteryHTML(state(x.w).mastery,x)+'<button type="button" class="primary full" style="margin-top:14px" onclick="nextQuestion()">下一題</button></div>';
 }
 function nextQuestion(){qstate.i++;qstate.lock=false;if(qstate.i>=qstate.items.length){quiz.innerHTML='<div class="card" style="text-align:center"><div style="font-size:44px;font-weight:900">'+qstate.score+' / '+qstate.items.length+'</div><p class="sub">本次智慧測驗完成</p><button class="primary" onclick="startSmart()">再測一次</button></div>';renderAllExceptQuiz()}else renderQuestion()}
 function recomputeMastery(x){
@@ -651,7 +664,9 @@ function renderRecords(){
 }
 function renderAllExceptQuiz(){renderStats();renderToday();renderLearn();renderRecords()}
 function renderAll(){
- trackTitle.textContent=TRACKS[track].title;trackDesc.textContent=TRACKS[track].desc;
+ const all=catalogPool(),ready=pool();
+ trackTitle.textContent=TRACKS[track].title;
+ trackDesc.textContent=TRACKS[track].desc+'｜目前已有中文義 '+ready.length+' / '+all.length;
  renderStats();renderToday();renderLearn();renderQuizHome();renderRecords();
 }
 
@@ -665,15 +680,15 @@ function pickPlacementWord(targetLv,used){
  const distances=[0,1,-1,2,-2,3,-3,4,-4,5,-5];
  for(const d of distances){
    const lv=Math.max(1,Math.min(6,targetLv+d));
-   const cand=HIGH_WORDS.filter(x=>x.lv===lv&&!used.has(x.w)&&!recent.has(x.w));
+   const cand=HIGH_WORDS.filter(x=>x.m&&x.lv===lv&&!used.has(x.w)&&!recent.has(x.w));
    if(cand.length)return shuffle(cand)[0];
  }
  for(const d of distances){
    const lv=Math.max(1,Math.min(6,targetLv+d));
-   const cand=HIGH_WORDS.filter(x=>x.lv===lv&&!used.has(x.w));
+   const cand=HIGH_WORDS.filter(x=>x.m&&x.lv===lv&&!used.has(x.w));
    if(cand.length)return shuffle(cand)[0];
  }
- const any=HIGH_WORDS.filter(x=>!used.has(x.w));
+ const any=HIGH_WORDS.filter(x=>x.m&&!used.has(x.w));
  return any.length?shuffle(any)[0]:null;
 }
 function startPlacement(){
@@ -685,24 +700,24 @@ function startPlacement(){
    const rec=avg<2?'j2000':avg<4.5?'h4500':'h6000';
    const bar=document.getElementById('placeBar'),box=document.getElementById('placeBox');
    if(bar)bar.style.width='100%';
-   if(box)box.innerHTML='<div style="text-align:center;padding:15px 0"><h2>試用建議：'+TRACKS[rec].title+'</h2><p class="sub">本次使用完整高中 Level 1–6 字庫做聽音辨字的自適應流程。這仍不是正式字彙量估計，因為完整中文義與題目難度尚未完成校準。</p><button type="button" class="primary" onclick="selectTrack(\''+rec+'\')">使用這個範圍</button></div>';
+   if(box)box.innerHTML='<div style="text-align:center;padding:15px 0"><h2>試用建議：'+TRACKS[rec].title+'</h2><p class="sub">本次從已有中文義的完整高中字庫抽題，12 題不重複並盡量避開最近兩次出過的字。正式字彙量估計仍需後續做難度校準。</p><button type="button" class="primary" onclick="selectTrack(\''+rec+'\')">使用這個範圍</button></div>';
  }
  function ask(){
    if(i>=12){finishPlacement();return}
    const lv=Math.round((lo+hi)/2),x=pickPlacementWord(lv,used);
    if(!x){finishPlacement();return}
    used.add(x.w);asked.push(x.w);
-   const sameBand=HIGH_WORDS.filter(y=>y.w!==x.w&&Math.abs((y.lv||1)-x.lv)<=1);
-   const opts=shuffle([x.w,...shuffle(sameBand).slice(0,3).map(y=>y.w)]);
+   const sameBand=HIGH_WORDS.filter(y=>y.m&&y.w!==x.w&&Math.abs((y.lv||1)-x.lv)<=1);
+   const meanings=[...new Set(sameBand.map(y=>y.m).filter(Boolean).filter(m=>m!==x.m))];
+   const opts=shuffle([x.m,...shuffle(meanings).slice(0,3)]);
    const bar=document.getElementById('placeBar'),box=document.getElementById('placeBox');
    if(bar)bar.style.width=Math.round(i/12*100)+'%';
    if(!box)return;
-   box.innerHTML='<div class="qmeta">第 '+(i+1)+' / 12 題 · 目標 Level '+lv+'</div><div class="qtext">聽發音，選出正確單字</div><button type="button" class="secondary" data-word="'+enc(x.w)+'" onclick="speakWord(dec(this.dataset.word))">🔊 播放裝置發音</button>'+
-     '<div class="options" style="margin-top:12px">'+opts.map((o,k)=>'<button type="button" class="option" data-v="'+enc(o)+'">'+String.fromCharCode(65+k)+'　'+escHtml(o)+'</button>').join('')+'</div>'+
-     '<div class="sub" style="margin-top:12px">同一次程度測驗不重複單字，並盡量避開最近兩次出過的字。</div>';
-   setTimeout(()=>speakWord(x.w),150);
+   box.innerHTML='<div class="qmeta">第 '+(i+1)+' / 12 題 · 目標 Level '+lv+'</div><div class="qtext">「'+escHtml(x.w)+'」最適合的中文意思是？</div>'+
+     '<div class="options">'+opts.map((o,k)=>'<button type="button" class="option" data-v="'+enc(o)+'">'+String.fromCharCode(65+k)+'　'+escHtml(o)+'</button>').join('')+'</div>'+
+     '<div class="sub" style="margin-top:12px">同一次程度測驗不重複單字。</div>';
    box.querySelectorAll('.option').forEach(btn=>btn.addEventListener('click',()=>{
-     const ok=dec(btn.dataset.v)===x.w;
+     const ok=dec(btn.dataset.v)===x.m;
      history.push(ok?x.lv:Math.max(1,x.lv-1));
      if(ok)lo=Math.min(6,Math.max(lo,x.lv+1));else hi=Math.max(1,Math.min(hi,x.lv-1));
      if(lo>hi){lo=Math.max(1,x.lv-1);hi=Math.min(6,x.lv+1)}
@@ -712,6 +727,6 @@ function startPlacement(){
  ask();
 }
 function resetProgress(){if(confirm('確定要清除這台裝置上的學習紀錄？')){db={};recentSessions={};placementRecent=[];localStorage.removeItem('smart_vocab_progress_v5');localStorage.removeItem('smart_vocab_recent_v1');localStorage.removeItem('smart_vocab_placement_recent_v1');localStorage.removeItem('smart_vocab_last_saved');lastSavedAt=0;save();if(track)renderAll();alert('已清除本機學習紀錄')}}
-if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=7').catch(()=>{}))}
+if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js?v=8').catch(()=>{}))}
 </script>
 </body></html>
