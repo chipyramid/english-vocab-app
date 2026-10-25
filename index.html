@@ -1,43 +1,334 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>升學英文智慧單字</title><style>
-body{margin:0;background:#f5f7fb;color:#172033;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}.app{max-width:900px;margin:auto;padding:18px 15px 40px}.card{background:#fff;border:1px solid #e3e8f0;border-radius:20px;padding:20px;margin-bottom:14px;box-shadow:0 8px 24px #0000000d}.hidden{display:none!important}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.choice{padding:20px;border:2px solid #e3e8f0;border-radius:16px;background:#fff;text-align:left}.choice b{font-size:21px;display:block;margin-bottom:6px}.sub{font-size:13px;color:#6b7280;line-height:1.5}button{border:0;border-radius:11px;padding:11px 14px;font-size:15px}.primary{background:#3157d5;color:white}.secondary{background:#edf0f5;color:#344054}.good{background:#e8f6ef;color:#16794f}.bad{background:#fdecec;color:#b74040}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.stat{background:#fff;border:1px solid #e3e8f0;border-radius:13px;padding:10px;text-align:center}.stat b{font-size:20px;display:block}.stat span{font-size:11px;color:#6b7280}.tabs{display:flex;gap:8px;overflow:auto;margin:14px 0}.tab{background:#e9edf5;color:#344054;white-space:nowrap}.tab.active{background:#172033;color:#fff}.word{font-size:40px;font-weight:800;text-align:center;margin:34px 0 6px}.meaning{text-align:center;font-size:24px;margin:22px 0 8px}.example{text-align:center;color:#4f5968;line-height:1.6;margin-bottom:24px}.pill{display:inline-block;font-size:12px;padding:5px 8px;border-radius:999px;background:#eef1f6;color:#596273}.task{display:flex;justify-content:space-between;align-items:center;border:1px solid #e3e8f0;border-radius:14px;padding:12px;margin:8px 0}.options{display:grid;gap:10px}.option{width:100%;text-align:left;background:#fff;border:1px solid #d9dee8;padding:14px}.option.correct{background:#eaf8f1;border-color:#2d9469}.option.wrong{background:#fdeeee;border-color:#c85858}.feedback{margin-top:14px;background:#f1f4f8;border-radius:12px;padding:13px;line-height:1.55}.progress{height:8px;background:#e6eaf0;border-radius:999px;overflow:hidden;margin:10px 0 16px}.progress>div{height:100%;background:#3157d5}.list{display:grid;gap:8px}.item{background:#fff;border:1px solid #e3e8f0;border-radius:13px;padding:12px;display:flex;justify-content:space-between;gap:12px}.bar{height:6px;background:#e8ebf1;border-radius:999px;overflow:hidden}.bar i{display:block;height:100%;background:#3157d5}input{width:100%;padding:13px;border:1px solid #d8dde6;border-radius:11px;font-size:17px}@media(max-width:650px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.word{font-size:34px}}
-</style></head><body><div class="app">
-<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px"><div><div style="font-size:24px;font-weight:800">📘 升學英文智慧單字</div><div class="sub">依台灣升學範圍分級，專攻真正不熟的字</div></div><button class="secondary" onclick="home()">首頁</button></div>
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f9ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<title>升學英文智慧單字</title>
+<style>
+:root{
+ --bg:#f7f9ff;--card:#fff;--ink:#10224b;--muted:#6d7890;--line:#e4e9f3;
+ --blue:#1769ee;--blue2:#2e83ff;--green:#15a464;--red:#d34c55;--orange:#ff8c1a;
+ --shadow:0 12px 34px rgba(25,52,100,.08)
+}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#fbfcff,#f4f7fc);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif}
+button,input{font:inherit}.app{max-width:920px;margin:auto;min-height:100vh;padding:18px 15px 92px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px}.brand{font-size:26px;font-weight:900;letter-spacing:.2px}.sub{font-size:13px;color:var(--muted);line-height:1.55}
+.card{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:var(--shadow);margin-bottom:14px}
+h1,h2,h3,p{margin-top:0}h2{font-size:22px}.hidden{display:none!important}
+.section{font-weight:900;font-size:20px;margin:14px 0 10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.choice{border:1px solid var(--line);border-radius:20px;padding:18px;background:#fff;text-align:left;min-height:142px;box-shadow:0 5px 18px rgba(30,55,100,.05)}
+.choice b{display:block;font-size:23px;margin:9px 0 5px}.choice .ico{font-size:28px}.choice.j{background:linear-gradient(135deg,#f2feff,#eefbf7)}.choice.h{background:linear-gradient(135deg,#fff8ee,#f7f0ff)}
+.choice:active{transform:scale(.99)}
+.primary,.secondary,.ghost,.good,.bad{border:0;border-radius:14px;padding:12px 16px;cursor:pointer}
+.primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;font-weight:800;box-shadow:0 7px 18px rgba(23,105,238,.2)}
+.secondary{background:#eef2f7;color:#33415d}.ghost{background:transparent;color:var(--blue);font-weight:700}.good{background:#e9f8f0;color:#128656}.bad{background:#feedef;color:#b83b45}
+.full{width:100%}.notice{border:1px solid #dce8ff;background:#f3f7ff;border-radius:16px;padding:13px 14px;color:#4f648b;font-size:13px;line-height:1.55}
+.trackhead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.track-title{font-size:24px;font-weight:900}.badge{display:inline-block;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:800;background:#edf4ff;color:#3468b5}
+.progress-wrap{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:15px}.progress-row{display:flex;justify-content:space-between;align-items:center}.progress{height:9px;background:#e9edf4;border-radius:999px;overflow:hidden;margin-top:10px}.progress i{display:block;height:100%;background:linear-gradient(90deg,#2785ff,#1769ee);border-radius:999px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.stat{border:1px solid var(--line);background:#fff;border-radius:18px;padding:15px}.stat b{font-size:25px;display:block;margin-top:4px}.stat span{color:var(--muted);font-size:12px}.stat .sico{font-size:21px}
+.tabs{display:flex;overflow:auto;gap:6px;border-bottom:1px solid var(--line);margin-bottom:14px}.tab{background:transparent;border:0;padding:12px 14px;color:#53627b;white-space:nowrap;font-weight:800}.tab.active{color:var(--blue);border-bottom:3px solid var(--blue)}
+.task{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 0;border-bottom:1px solid #edf0f5}.task:last-child{border-bottom:0}.task-left{display:flex;align-items:center;gap:12px}.round{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:21px;background:#edf4ff}.task b{display:block}.task small{color:var(--muted);line-height:1.45}
+.word{font-size:46px;font-weight:900;text-align:center;margin:32px 0 3px}.pos{text-align:center;color:var(--muted)}.meaning{text-align:center;font-size:25px;font-weight:800;margin:24px 0 8px}.example{text-align:center;color:#4d5b73;line-height:1.7;margin:0 auto 22px;max-width:640px}
+.mastery{margin-top:14px}.dots{display:flex;gap:7px;justify-content:center;margin-top:8px}.dot{width:13px;height:13px;border-radius:50%;background:#dde4ee}.dot.on{background:var(--green)}
+.qmeta{color:var(--muted);font-size:13px}.qtext{font-size:24px;line-height:1.45;font-weight:850;margin:20px 0}.options{display:grid;gap:10px}.option{width:100%;padding:14px;text-align:left;border:1px solid #d9e0eb;border-radius:14px;background:#fff;color:#21314c}.option.correct{border-color:#20a76b;background:#eaf9f1;color:#137b50}.option.wrong{border-color:#d6545d;background:#feeff0;color:#a8333c}.feedback{margin-top:15px;padding:16px;border-radius:16px;background:#effaf5;border:1px solid #d9f0e5;line-height:1.6}
+.search{width:100%;padding:13px 14px;border:1px solid #dce2ec;border-radius:14px;background:#fff}.list{display:grid;gap:9px}.item{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px;display:flex;align-items:center;justify-content:space-between;gap:12px}.item b{font-size:17px}.item small{display:block;color:var(--muted);margin-top:3px}.mini{font-size:12px;color:var(--muted);text-align:right}
+.bottom{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-top:1px solid var(--line);z-index:30}.bottom-in{max-width:920px;margin:auto;display:grid;grid-template-columns:repeat(4,1fr);padding:7px 10px max(7px,env(safe-area-inset-bottom))}.nav{border:0;background:transparent;color:#778298;padding:7px 2px;font-size:11px}.nav span{display:block;font-size:21px;margin-bottom:2px}.nav.active{color:var(--blue);font-weight:900}
+.source-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #edf0f5}.source-row:last-child{border-bottom:0}
+@media(max-width:650px){.app{padding-top:14px}.brand{font-size:23px}.grid2{grid-template-columns:1fr 1fr}.choice{min-height:136px;padding:15px}.choice b{font-size:20px}.word{font-size:38px}.qtext{font-size:21px}}
+</style>
+</head>
+<body><div class="app">
+<div class="top"><div><div class="brand">升學英文智慧單字</div><div class="sub">依台灣升學範圍分級，專攻真正不熟的字</div></div><button class="ghost" onclick="goHome()">首頁</button></div>
 
-<section id="home"><div class="card"><h2>你要準備什麼？</h2><div class="grid">
-<button class="choice" onclick="choose('j1200')"><b>國中 1,200 基礎</b><span class="sub">國中課綱基本字彙方向｜測試字庫</span></button>
-<button class="choice" onclick="choose('j2000')"><b>國中 2,000 會考</b><span class="sub">常用參考字彙與會考閱讀方向｜測試字庫</span></button>
-<button class="choice" onclick="choose('h4500')"><b>高中 4,500 學測核心</b><span class="sub">大考中心 Level 1–4｜測試字庫</span></button>
-<button class="choice" onclick="choose('h7000')"><b>高中進階／挑戰</b><span class="sub">Level 5–6 與進階閱讀｜測試字庫</span></button>
-</div></div><div class="card"><h3>先測程度</h3><p class="sub">先用 12 題自適應小測驗估計較適合的範圍。</p><button class="primary" onclick="startPlacement()">開始程度測驗</button></div><div class="sub">目前是流程驗證版：先把分級、複習、題型與弱點分析做對，再擴成完整官方字庫。</div></section>
+<section id="homeScreen">
+  <div class="section">國中</div>
+  <div class="grid2">
+    <button class="choice j" onclick="selectTrack('j1200')"><div class="ico">📖</div><b>1,200 基礎</b><span class="sub">國中課綱基本字彙方向</span></button>
+    <button class="choice j" onclick="selectTrack('j2000')"><div class="ico">📊</div><b>2,000 會考</b><span class="sub">常用參考字彙與會考方向</span></button>
+  </div>
+  <div class="section">高中</div>
+  <div class="grid2">
+    <button class="choice h" onclick="selectTrack('h4500')"><div class="ico">🎓</div><b>4,500 學測核心</b><span class="sub">大考中心 Level 1–4 方向</span></button>
+    <button class="choice h" onclick="selectTrack('h6000')"><div class="ico">📈</div><b>進階／挑戰</b><span class="sub">Level 5–6 進階閱讀方向</span></button>
+  </div>
+  <div class="card" style="margin-top:16px;background:linear-gradient(135deg,#f1f7ff,#eaf3ff)">
+    <h2>先測程度</h2>
+    <p class="sub">透過少量題目，快速估計目前程度並推薦學習範圍。</p>
+    <button class="primary full" onclick="startPlacement()">開始程度測驗 →</button>
+  </div>
+  <div class="notice"><b>資料狀態：</b>這是功能試用版，字庫尚不是完整 1,200／2,000／4,500／6,000 字。正式字彙範圍會以國教院與大考中心官方資料為基準，不把 AI 自行判斷的分級冒充官方資料。</div>
+</section>
 
-<section id="placement" class="hidden"><div class="card"><div class="progress"><div id="placeBar"></div></div><div id="placeBox"></div></div></section>
+<section id="appScreen" class="hidden">
+  <div class="card">
+    <div class="trackhead"><div><div id="trackTitle" class="track-title"></div><div id="trackDesc" class="sub"></div></div><span class="badge">功能試用版</span></div>
+    <div class="progress-wrap">
+      <div class="progress-row"><b>整體進度</b><span><b id="progressText">0 / 0</b>　<span id="progressPct">0%</span></span></div>
+      <div class="progress"><i id="progressBar" style="width:0"></i></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="sico">✅</span><span> 已熟練</span><b id="knownN">0</b></div>
+      <div class="stat"><span class="sico">🗓️</span><span> 今日到期</span><b id="dueN">0</b></div>
+      <div class="stat"><span class="sico">⚠️</span><span> 弱項單字</span><b id="weakN">0</b></div>
+      <div class="stat"><span class="sico">🎯</span><span> 正確率</span><b id="rateN">0%</b></div>
+    </div>
+  </div>
 
-<section id="dash" class="hidden"><div class="card"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><div><h2 id="trackTitle" style="margin-bottom:4px"></h2><div id="trackDesc" class="sub"></div></div><button class="secondary" onclick="home()">切換範圍</button></div><div class="stats"><div class="stat"><b id="knownN">0</b><span>已熟練</span></div><div class="stat"><b id="dueN">0</b><span>今日到期</span></div><div class="stat"><b id="weakN">0</b><span>弱項單字</span></div><div class="stat"><b id="rateN">0%</b><span>正確率</span></div></div></div>
-<div class="tabs"><button class="tab active" data-tab="today">今日任務</button><button class="tab" data-tab="learn">單字學習</button><button class="tab" data-tab="quiz">智慧測驗</button><button class="tab" data-tab="wrong">錯題複習</button><button class="tab" data-tab="analysis">學習分析</button></div>
-<div id="today" class="pane"></div><div id="learn" class="pane hidden"></div><div id="quiz" class="pane hidden"></div><div id="wrong" class="pane hidden"></div><div id="analysis" class="pane hidden"></div></section>
-</div><script>
-const W=[
-['answer','回答；答案','n./v.','Please answer the question.',1,1],['because','因為','conj.','I stayed home because I was sick.',1,1],['borrow','借入','v.','May I borrow your pen?',1,1],['careful','小心的','adj.','Be careful when crossing the street.',1,1],['different','不同的','adj.','The two ideas are different.',1,1],['important','重要的','adj.','Sleep is important for health.',1,1],['language','語言','n.','English is an international language.',1,1],['practice','練習','n./v.','Daily practice improves your English.',1,1],['weather','天氣','n.','The weather is nice today.',1,1],['advice','建議','n.','My teacher gave me useful advice.',2,2],['although','雖然','conj.','Although it was raining, we went out.',2,2],['environment','環境','n.','We should protect the environment.',2,2],['experience','經驗；經歷','n./v.','It was a valuable experience.',2,2],['improve','改善；進步','v.','Reading can improve your vocabulary.',2,2],['prepare','準備','v.','She prepared carefully for the exam.',2,2],['receive','收到；接收','v.','I received a message this morning.',2,2],['successful','成功的','adj.','The event was very successful.',2,2],['through','穿過；透過','prep./adv.','We walked through the park.',2,2],['without','沒有；不帶','prep.','He left without saying goodbye.',2,2],
-['grade','年級；成績；評分','n./v.','She received a good grade.',1,0],['ground','地面；土地','n./v.','The ball fell to the ground.',1,0],['grow','成長；種植','v.','Children grow quickly.',1,0],['guess','猜測','v./n.','Can you guess the answer?',1,0],['habit','習慣','n.','Reading is a useful habit.',1,0],['gradual','逐漸的','adj.','There was a gradual improvement.',2,0],['grain','穀物；顆粒','n.','Rice is an important grain.',2,0],['guard','守衛；保護','n./v.','The guard checked the entrance.',2,0],['handle','處理；把手','v./n.','She handled the problem calmly.',2,0],['grasp','理解；抓住','v./n.','He quickly grasped the main idea.',3,0],['grocery','食品雜貨','n.','We bought groceries after work.',3,0],['guardian','監護人；守護者','n.','A guardian signed the form.',4,0],['guarantee','保證','v./n.','The company guarantees the product.',4,0],['distinguish','區分；辨別','v.','We must distinguish fact from opinion.',4,0],['consequence','結果；後果','n.','Every decision has consequences.',4,0],['significant','重要的；顯著的','adj.','There was a significant increase in sales.',4,0],['gravity','重力；嚴重性','n.','Gravity pulls objects toward Earth.',5,0],['habitat','棲息地','n.','The forest is home to many habitats.',5,0],['guideline','指導原則','n.','Please follow the safety guidelines.',5,0],['grieve','悲傷；哀悼','v.','The family grieved after the loss.',5,0],['grim','嚴峻的；令人沮喪的','adj.','The report painted a grim picture.',5,0],['substantial','大量的；重大的','adj.','The project requires substantial investment.',5,0],['preliminary','初步的','adj.','These are preliminary findings.',5,0],['coherent','連貫的；一致的','adj.','She gave a coherent explanation.',5,0],['inevitable','不可避免的','adj.','Some change is inevitable.',5,0],['hamper','妨礙；阻礙','v.','Heavy rain hampered rescue efforts.',6,0],['harness','利用；控制','v./n.','Scientists hope to harness solar energy.',6,0],['harass','騷擾','v.','Workers should not be harassed at work.',6,0],['deteriorate','惡化','v.','Conditions may deteriorate rapidly.',6,0]
-].map(a=>({w:a[0],m:a[1],p:a[2],e:a[3],lv:a[4],j:a[5]}));
-const T={j1200:{t:'國中 1,200 基礎',d:'國中基本字彙方向（測試字庫）',f:x=>x.j===1},j2000:{t:'國中 2,000 會考',d:'國中常用參考字彙方向（測試字庫）',f:x=>x.j>0},h4500:{t:'高中 4,500 學測核心',d:'大考中心 Level 1–4（測試字庫）',f:x=>x.lv<=4},h7000:{t:'高中進階／挑戰',d:'大考中心 Level 1–6（測試字庫）',f:x=>x.lv<=6}};
-let tr='',idx=0,Q=null,db=JSON.parse(localStorage.getItem('sv3')||'{}');
-const st=w=>db[w]||(db[w]={m:0,ok:0,bad:0,due:0,types:{en:0,zh:0,cloze:0,spell:0}}),save=()=>localStorage.setItem('sv3',JSON.stringify(db)),pool=()=>W.filter(T[tr].f);
-function screen(id){['home','placement','dash'].forEach(x=>document.getElementById(x).classList.add('hidden'));document.getElementById(id).classList.remove('hidden')}function home(){screen('home')}
-function choose(t){tr=t;trackTitle.textContent=T[t].t;trackDesc.textContent=T[t].d;renderAll();screen('dash')}
-function renderAll(){stats();today.innerHTML='<div class="card"><h3>今天要做的事</h3>'+task('新單字',pool().filter(x=>st(x.w).ok+st(x.w).bad===0).length,'先建立辨識')+task('到期複習',pool().filter(x=>!st(x.w).due||st(x.w).due<=Date.now()).length,'依熟練度安排')+task('錯題重測',pool().filter(x=>st(x.w).bad>0).length,'優先補弱點')+'<button class="primary" onclick="startSmart()">開始今日學習</button></div>';renderLearn();quiz.innerHTML='<div class="card"><h3>智慧測驗</h3><p class="sub">優先挑熟練度低、近期答錯、或已到期單字，混合英→中、中→英、克漏、拼字。</p><button class="primary" onclick="startSmart()">開始 10 題</button></div>';wrong.innerHTML='<div class="card"><h3>錯題複習</h3><button class="primary" onclick="startWrong()">只測錯題</button></div>';analysis.innerHTML='<div class="card"><h3>學習分析</h3><div class="list">'+pool().sort((a,b)=>st(a.w).m-st(b.w).m).map(x=>'<div class="item"><div><b>'+x.w+'</b><div class="sub">'+x.m+'</div></div><div style="min-width:90px"><div class="sub">熟練 '+st(x.w).m+'/5</div><div class="bar"><i style="width:'+st(x.w).m*20+'%"></i></div></div></div>').join('')+'</div></div>'}
-function task(n,c,d){return '<div class="task"><div><b>'+n+'</b><div class="sub">'+d+'</div></div><span class="pill">'+Math.min(c,20)+' 題</span></div>'}
-function stats(){let a=pool(),ok=a.reduce((s,x)=>s+st(x.w).ok,0),tot=a.reduce((s,x)=>s+st(x.w).ok+st(x.w).bad,0);knownN.textContent=a.filter(x=>st(x.w).m>=4).length;dueN.textContent=a.filter(x=>!st(x.w).due||st(x.w).due<=Date.now()).length;weakN.textContent=a.filter(x=>st(x.w).bad>st(x.w).ok||st(x.w).m<2).length;rateN.textContent=tot?Math.round(ok/tot*100)+'%':'0%'}
-function renderLearn(){let x=pool()[idx%pool().length],s=st(x.w);learn.innerHTML='<div class="card"><span class="pill">Level '+x.lv+'</span><div class="word">'+x.w+'</div><div class="sub" style="text-align:center">'+x.p+'</div><div id="a" class="hidden"><div class="meaning">'+x.m+'</div><div class="example">'+x.e+'</div></div><div style="text-align:center"><button id="r" class="primary" onclick="a.classList.remove(\'hidden\');r.classList.add(\'hidden\')">顯示答案</button></div><div class="grid" style="margin-top:12px"><button class="bad" onclick="mark(false)">還不熟</button><button class="good" onclick="mark(true)">我會了</button></div><div class="sub" style="margin-top:10px">熟練度 '+s.m+'/5</div><div class="bar"><i style="width:'+s.m*20+'%"></i></div></div>'}
-function mark(ok){update(pool()[idx%pool().length],ok,'en');idx++;save();renderAll()}
-function ranked(a){return [...a].sort((A,B)=>{let a=st(A.w),b=st(B.w),now=Date.now();return ((b.bad*3)+(5-b.m)*2+(!b.due||b.due<=now?3:0))-((a.bad*3)+(5-a.m)*2+(!a.due||a.due<=now?3:0))})}
-function startSmart(){Q={items:ranked(pool()).slice(0,10),i:0,score:0,target:'quiz'};switchPane('quiz');rq()}function startWrong(){let a=pool().filter(x=>st(x.w).bad>0);if(!a.length){wrong.innerHTML='<div class="card">目前沒有錯題。</div>';return}Q={items:ranked(a).slice(0,10),i:0,score:0,target:'wrong'};switchPane('wrong');rq()}
-function qt(x){let a=['en','zh','cloze','spell'];return a.sort((u,v)=>st(x.w).types[u]-st(x.w).types[v])[0]}function sh(a){return [...a].sort(()=>Math.random()-.5)}
-function rq(){let x=Q.items[Q.i],t=qt(x),body='';if(t==='spell')body='<h2>'+x.m+'</h2><input id="sp" placeholder="請拼出英文單字"><button class="primary" style="margin-top:10px" onclick="spell()">送出</button>';else{let q=t==='en'?'「'+x.w+'」最適合的中文意思是？':t==='zh'?'「'+x.m+'」最適合的英文是？':x.e.replace(new RegExp('\\b'+x.w+'\\b','i'),'_____');let c=t==='en'?x.m:x.w,others=pool().filter(y=>y.w!==x.w).map(y=>t==='en'?y.m:y.w),opts=sh([c,...sh([...new Set(others)]).slice(0,3)]);body='<h2>'+q+'</h2><div class="options">'+opts.map(o=>'<button class="option" onclick="ans(this,'+JSON.stringify(o)+','+JSON.stringify(c)+','+JSON.stringify(t)+')">'+o+'</button>').join('')+'</div>'}document.getElementById(Q.target).innerHTML='<div class="card"><div class="sub">第 '+(Q.i+1)+' / '+Q.items.length+' 題 · '+({en:'英→中',zh:'中→英',cloze:'例句克漏',spell:'拼字'}[t])+'</div><div class="progress"><div style="width:'+Math.round(Q.i/Q.items.length*100)+'%"></div></div>'+body+'<div id="fb"></div></div>'}
-function ans(btn,v,c,t){if(Q.lock)return;Q.lock=true;document.querySelectorAll('.option').forEach(b=>{b.disabled=true;if(b.textContent===c)b.classList.add('correct');else if(b===btn)b.classList.add('wrong')});done(v===c,t,c)}function spell(){if(Q.lock)return;Q.lock=true;let x=Q.items[Q.i];done((sp.value||'').trim().toLowerCase()===x.w.toLowerCase(),'spell',x.w)}
-function done(ok,t,c){let x=Q.items[Q.i];update(x,ok,t);if(ok)Q.score++;save();stats();fb.innerHTML='<div class="feedback">'+(ok?'答對了。':'答錯了。')+' <b>'+x.w+'</b> = '+x.m+(ok?'':'<br>正確答案：<b>'+c+'</b>')+'<br><button class="primary" style="margin-top:10px" onclick="nextQ()">下一題</button></div>'}
-function update(x,ok,t){let s=st(x.w),now=Date.now();if(ok){s.ok++;s.types[t]++;s.m=Math.min(5,s.m+1);s.due=now+[0,1,3,7,14,30][s.m]*86400000}else{s.bad++;s.types[t]=Math.max(-3,s.types[t]-1);s.m=Math.max(0,s.m-1);s.due=now+86400000}}
-function nextQ(){Q.i++;Q.lock=false;if(Q.i>=Q.items.length){document.getElementById(Q.target).innerHTML='<div class="card" style="text-align:center"><h2>'+Q.score+' / '+Q.items.length+'</h2><p>本次測驗完成</p></div>';stats()}else rq()}
-function switchPane(id){document.querySelectorAll('.pane').forEach(x=>x.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===id))}document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>switchPane(b.dataset.tab));
-function startPlacement(){screen('placement');let lo=1,hi=6,i=0,h=[];function ask(){if(i>=12){let avg=h.reduce((s,x)=>s+x,0)/Math.max(1,h.length),rec=avg<2?'j2000':avg<4.5?'h4500':'h7000';placeBar.style.width='100%';placeBox.innerHTML='<div style="text-align:center"><h2>建議：'+T[rec].t+'</h2><p class="sub">這是測試版粗略估計，正式版會用更大的校準題庫。</p><button class="primary" onclick="choose(\''+rec+'\')">使用這個範圍</button></div>';return}let lv=Math.round((lo+hi)/2),cand=W.filter(x=>x.lv===lv),x=cand[Math.floor(Math.random()*cand.length)]||W[0],opts=sh([x.m,...sh(W.filter(y=>y.w!==x.w).map(y=>y.m)).slice(0,3)]);placeBar.style.width=Math.round(i/12*100)+'%';placeBox.innerHTML='<div class="sub">第 '+(i+1)+' / 12 題 · Level '+lv+'</div><h2>「'+x.w+'」的意思是？</h2><div class="options">'+opts.map(o=>'<button class="option">'+o+'</button>').join('')+'</div>';placeBox.querySelectorAll('.option').forEach(b=>b.onclick=()=>{let ok=b.textContent===x.m;h.push(ok?lv:Math.max(1,lv-1));if(ok)lo=Math.min(6,lv+1);else hi=Math.max(1,lv-1);if(lo>hi){lo=Math.max(1,lv-1);hi=Math.min(6,lv+1)}i++;ask()})}ask()}
-</script></body></html>
+  <div class="tabs">
+    <button class="tab active" data-tab="today">今日任務</button>
+    <button class="tab" data-tab="learn">單字學習</button>
+    <button class="tab" data-tab="quiz">智慧測驗</button>
+    <button class="tab" data-tab="records">學習紀錄</button>
+  </div>
+
+  <div id="today" class="pane"></div>
+  <div id="learn" class="pane hidden"></div>
+  <div id="quiz" class="pane hidden"></div>
+  <div id="records" class="pane hidden"></div>
+</section>
+
+<section id="placementScreen" class="hidden">
+ <div class="card">
+   <div class="qmeta">程度測驗</div>
+   <div class="progress"><i id="placeBar" style="width:0"></i></div>
+   <div id="placeBox"></div>
+ </div>
+</section>
+
+<section id="settingsScreen" class="hidden">
+ <div class="card">
+   <h2>資料與來源</h2>
+   <div class="source-row"><div><b>國中字彙架構</b><div class="sub">國教院研究資料：國中至少 1,200 字，另列 2,000 常用參考字彙。</div></div><span class="badge">官方依據</span></div>
+   <div class="source-row"><div><b>高中字彙架構</b><div class="sub">大考中心《高中英文參考詞彙表》，分 Level 1–6。</div></div><span class="badge">官方依據</span></div>
+   <div class="source-row"><div><b>目前 App 字庫</b><div class="sub">功能測試用樣本字庫；尚未宣稱為完整官方清單。</div></div><span class="badge" style="background:#fff3dc;color:#8a5d00">測試</span></div>
+ </div>
+ <div class="card">
+   <h2>學習資料</h2>
+   <p class="sub">學習紀錄只保存在目前瀏覽器。</p>
+   <button class="bad" onclick="resetProgress()">清除本機學習紀錄</button>
+ </div>
+</section>
+</div>
+
+<div class="bottom"><div class="bottom-in">
+ <button class="nav active" data-nav="home" onclick="bottomNav('home')"><span>⌂</span>首頁</button>
+ <button class="nav" data-nav="today" onclick="bottomNav('today')"><span>▣</span>今日任務</button>
+ <button class="nav" data-nav="records" onclick="bottomNav('records')"><span>▥</span>學習紀錄</button>
+ <button class="nav" data-nav="settings" onclick="bottomNav('settings')"><span>⚙</span>設定</button>
+</div></div>
+
+<script>
+const WORDS=[
+ {w:'answer',m:'回答；答案',p:'n./v.',e:'Please answer the question.',lv:1,j:1},
+ {w:'because',m:'因為',p:'conj.',e:'I stayed home because I was sick.',lv:1,j:1},
+ {w:'borrow',m:'借入',p:'v.',e:'May I borrow your pen?',lv:1,j:1},
+ {w:'careful',m:'小心的',p:'adj.',e:'Be careful when crossing the street.',lv:1,j:1},
+ {w:'different',m:'不同的',p:'adj.',e:'The two ideas are different.',lv:1,j:1},
+ {w:'important',m:'重要的',p:'adj.',e:'Sleep is important for health.',lv:1,j:1},
+ {w:'language',m:'語言',p:'n.',e:'English is an international language.',lv:1,j:1},
+ {w:'practice',m:'練習',p:'n./v.',e:'Daily practice improves your English.',lv:1,j:1},
+ {w:'weather',m:'天氣',p:'n.',e:'The weather is nice today.',lv:1,j:1},
+ {w:'advice',m:'建議',p:'n.',e:'My teacher gave me useful advice.',lv:2,j:2},
+ {w:'although',m:'雖然',p:'conj.',e:'Although it was raining, we went out.',lv:2,j:2},
+ {w:'environment',m:'環境',p:'n.',e:'We should protect the environment.',lv:2,j:2},
+ {w:'experience',m:'經驗；經歷',p:'n./v.',e:'It was a valuable experience.',lv:2,j:2},
+ {w:'improve',m:'改善；進步',p:'v.',e:'Reading can improve your vocabulary.',lv:2,j:2},
+ {w:'prepare',m:'準備',p:'v.',e:'She prepared carefully for the exam.',lv:2,j:2},
+ {w:'receive',m:'收到；接收',p:'v.',e:'I received a message this morning.',lv:2,j:2},
+ {w:'successful',m:'成功的',p:'adj.',e:'The event was very successful.',lv:2,j:2},
+ {w:'through',m:'穿過；透過',p:'prep./adv.',e:'We walked through the park.',lv:2,j:2},
+ {w:'without',m:'沒有；不帶',p:'prep.',e:'He left without saying goodbye.',lv:2,j:2},
+ {w:'grade',m:'年級；成績；評分',p:'n./v.',e:'She received a good grade.',lv:1},
+ {w:'ground',m:'地面；土地',p:'n./v.',e:'The ball fell to the ground.',lv:1},
+ {w:'grow',m:'成長；種植',p:'v.',e:'Children grow quickly.',lv:1},
+ {w:'guess',m:'猜測',p:'v./n.',e:'Can you guess the answer?',lv:1},
+ {w:'habit',m:'習慣',p:'n.',e:'Reading is a useful habit.',lv:1},
+ {w:'gradual',m:'逐漸的',p:'adj.',e:'There was a gradual improvement.',lv:2},
+ {w:'grain',m:'穀物；顆粒',p:'n.',e:'Rice is an important grain.',lv:2},
+ {w:'guard',m:'守衛；保護',p:'n./v.',e:'The guard checked the entrance.',lv:2},
+ {w:'handle',m:'處理；把手',p:'v./n.',e:'She handled the problem calmly.',lv:2},
+ {w:'grasp',m:'理解；抓住',p:'v./n.',e:'He quickly grasped the main idea.',lv:3},
+ {w:'grocery',m:'食品雜貨',p:'n.',e:'We bought groceries after work.',lv:3},
+ {w:'guardian',m:'監護人；守護者',p:'n.',e:'A guardian signed the form.',lv:4},
+ {w:'guarantee',m:'保證',p:'v./n.',e:'The company guarantees the product.',lv:4},
+ {w:'distinguish',m:'區分；辨別',p:'v.',e:'We must distinguish fact from opinion.',lv:4},
+ {w:'consequence',m:'結果；後果',p:'n.',e:'Every decision has consequences.',lv:4},
+ {w:'significant',m:'重要的；顯著的',p:'adj.',e:'There was a significant increase in sales.',lv:4},
+ {w:'gravity',m:'重力；嚴重性',p:'n.',e:'Gravity pulls objects toward Earth.',lv:5},
+ {w:'habitat',m:'棲息地',p:'n.',e:'The forest is home to many habitats.',lv:5},
+ {w:'guideline',m:'指導原則',p:'n.',e:'Please follow the safety guidelines.',lv:5},
+ {w:'grieve',m:'悲傷；哀悼',p:'v.',e:'The family grieved after the loss.',lv:5},
+ {w:'grim',m:'嚴峻的；令人沮喪的',p:'adj.',e:'The report painted a grim picture.',lv:5},
+ {w:'substantial',m:'大量的；重大的',p:'adj.',e:'The project requires substantial investment.',lv:5},
+ {w:'preliminary',m:'初步的',p:'adj.',e:'These are preliminary findings.',lv:5},
+ {w:'coherent',m:'連貫的；一致的',p:'adj.',e:'She gave a coherent explanation.',lv:5},
+ {w:'inevitable',m:'不可避免的',p:'adj.',e:'Some change is inevitable.',lv:5},
+ {w:'hamper',m:'妨礙；阻礙',p:'v.',e:'Heavy rain hampered rescue efforts.',lv:6},
+ {w:'harness',m:'利用；控制',p:'v./n.',e:'Scientists hope to harness solar energy.',lv:6},
+ {w:'harass',m:'騷擾',p:'v.',e:'Workers should not be harassed at work.',lv:6},
+ {w:'deteriorate',m:'惡化',p:'v.',e:'Conditions may deteriorate rapidly.',lv:6}
+];
+
+const TRACKS={
+ j1200:{title:'國中 1,200 基礎',desc:'國中課綱基本字彙方向（目前為測試字庫）',filter:x=>x.j===1,target:1200},
+ j2000:{title:'國中 2,000 會考',desc:'國中常用參考字彙與會考方向（目前為測試字庫）',filter:x=>x.j===1||x.j===2,target:2000},
+ h4500:{title:'高中 4,500 學測核心',desc:'大考中心 Level 1–4 方向（目前為測試字庫）',filter:x=>x.lv<=4,target:4500},
+ h6000:{title:'高中進階／挑戰',desc:'大考中心 Level 1–6 方向（目前為測試字庫）',filter:x=>x.lv<=6,target:6000}
+};
+
+let track=localStorage.getItem('smart_vocab_track')||'';
+let learnIndex=0,qstate=null,searchText='';
+let db=JSON.parse(localStorage.getItem('smart_vocab_progress_v4')||'{}');
+
+function state(w){
+ if(!db[w]) db[w]={mastery:0,ok:0,bad:0,due:0,last:0,types:{en:0,zh:0,cloze:0,spell:0}};
+ return db[w];
+}
+function save(){localStorage.setItem('smart_vocab_progress_v4',JSON.stringify(db))}
+function pool(){return WORDS.filter(TRACKS[track].filter)}
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function setNav(name){document.querySelectorAll('.nav').forEach(x=>x.classList.toggle('active',x.dataset.nav===name))}
+function showOnly(id){['homeScreen','appScreen','placementScreen','settingsScreen'].forEach(x=>document.getElementById(x).classList.add('hidden'));document.getElementById(id).classList.remove('hidden')}
+function goHome(){showOnly('homeScreen');setNav('home')}
+function selectTrack(t){track=t;localStorage.setItem('smart_vocab_track',t);renderAll();showOnly('appScreen');switchPane('today');setNav('today')}
+function bottomNav(n){
+ if(n==='home'){goHome();return}
+ if(n==='settings'){showOnly('settingsScreen');setNav('settings');return}
+ if(!track){goHome();return}
+ showOnly('appScreen');switchPane(n==='records'?'records':'today');setNav(n)
+}
+function switchPane(id){
+ document.querySelectorAll('.pane').forEach(x=>x.classList.add('hidden'));
+ document.getElementById(id).classList.remove('hidden');
+ document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));
+}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>switchPane(b.dataset.tab));
+
+function renderStats(){
+ const a=pool(),now=Date.now(),known=a.filter(x=>state(x.w).mastery>=4).length;
+ const due=a.filter(x=>!state(x.w).due||state(x.w).due<=now).length;
+ const weak=a.filter(x=>state(x.w).bad>state(x.w).ok||state(x.w).mastery<2).length;
+ const ok=a.reduce((s,x)=>s+state(x.w).ok,0),tot=a.reduce((s,x)=>s+state(x.w).ok+state(x.w).bad,0);
+ const pct=a.length?Math.round(known/a.length*100):0;
+ knownN.textContent=known; dueN.textContent=due; weakN.textContent=weak; rateN.textContent=tot?Math.round(ok/tot*100)+'%':'0%';
+ progressText.textContent=known+' / '+a.length; progressPct.textContent=pct+'%'; progressBar.style.width=pct+'%';
+}
+
+function renderToday(){
+ const a=pool(),now=Date.now();
+ const fresh=a.filter(x=>state(x.w).ok+state(x.w).bad===0).length;
+ const due=a.filter(x=>!state(x.w).due||state(x.w).due<=now).length;
+ const wrong=a.filter(x=>state(x.w).bad>0).length;
+ today.innerHTML='<div class="card"><h2>今日任務</h2>'+
+ task('📖','新單字',Math.min(10,fresh),'今天建議學習的全新單字')+
+ task('↻','到期複習',Math.min(20,due),'依記憶曲線安排的複習單字')+
+ task('📝','錯題重測',Math.min(10,wrong),'加強容易出錯的單字')+
+ '<button class="primary full" style="margin-top:16px" onclick="startSmart()">▶ 開始今日學習</button></div>';
+}
+function task(icon,title,count,desc){return '<div class="task"><div class="task-left"><div class="round">'+icon+'</div><div><b>'+title+'</b><small>'+desc+'</small></div></div><b>'+count+' 題 ›</b></div>'}
+
+function renderLearn(){
+ const a=pool(); if(!a.length)return;
+ const x=a[learnIndex%a.length],s=state(x.w);
+ learn.innerHTML='<div class="card"><div style="display:flex;justify-content:space-between"><span class="badge">Level '+x.lv+'</span><button class="ghost" onclick="speakWord(\''+x.w+'\')">🔊 發音</button></div>'+
+ '<div class="word">'+x.w+'</div><div class="pos">'+x.p+'</div>'+
+ '<div id="learnAnswer" class="hidden"><div class="meaning">'+x.m+'</div><div class="example">'+x.e+'</div></div>'+
+ '<button id="showAnswerBtn" class="primary full" style="margin-top:22px" onclick="showLearnAnswer()">顯示答案</button>'+
+ '<div class="grid2" style="margin-top:10px"><button class="bad" onclick="markLearn(false)">還不熟</button><button class="good" onclick="markLearn(true)">我會了</button></div>'+
+ masteryHTML(s.mastery)+'</div>';
+}
+function showLearnAnswer(){learnAnswer.classList.remove('hidden');showAnswerBtn.classList.add('hidden')}
+function markLearn(ok){let x=pool()[learnIndex%pool().length];updateState(x,ok,'en');learnIndex++;save();renderAll()}
+function masteryHTML(n){return '<div class="mastery"><div class="sub" style="text-align:center">熟練度 '+n+'/5</div><div class="dots">'+[1,2,3,4,5].map(i=>'<i class="dot '+(i<=n?'on':'')+'"></i>').join('')+'</div></div>'}
+function speakWord(w){if('speechSynthesis'in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(w);u.lang='en-US';u.rate=.85;speechSynthesis.speak(u)}}
+
+function rankWords(a){
+ const now=Date.now();
+ return [...a].sort((A,B)=>{
+  const a=state(A.w),b=state(B.w);
+  const sa=a.bad*3+(5-a.mastery)*2+((!a.due||a.due<=now)?3:0);
+  const sb=b.bad*3+(5-b.mastery)*2+((!b.due||b.due<=now)?3:0);
+  return sb-sa;
+ });
+}
+function weakestType(x){
+ const t=state(x.w).types;
+ return ['en','zh','cloze','spell'].sort((a,b)=>t[a]-t[b])[0];
+}
+function startSmart(){
+ qstate={items:rankWords(pool()).slice(0,Math.min(10,pool().length)),i:0,score:0,lock:false};
+ switchPane('quiz');renderQuestion();
+}
+function renderQuizHome(){quiz.innerHTML='<div class="card"><h2>智慧測驗</h2><p class="sub">系統優先挑熟練度低、最近答錯或已到期的字，並混合英→中、中→英、例句克漏與拼字。</p><button class="primary full" onclick="startSmart()">開始 10 題</button></div>'}
+function renderQuestion(){
+ const x=qstate.items[qstate.i],type=weakestType(x),pct=Math.round(qstate.i/qstate.items.length*100);
+ let body='';
+ if(type==='spell'){
+   body='<div class="qtext">'+x.m+'</div><div class="sub">請拼出英文單字</div><input id="spellInput" class="search" style="margin:14px 0" autocomplete="off" autocapitalize="none"><button class="primary" onclick="checkSpell()">送出答案</button>';
+ }else{
+   const q=type==='en'?'「'+x.w+'」最適合的中文意思是？':type==='zh'?'「'+x.m+'」最適合的英文是？':x.e.replace(new RegExp('\\b'+x.w+'\\b','i'),'_____');
+   const correct=type==='en'?x.m:x.w;
+   const others=pool().filter(y=>y.w!==x.w).map(y=>type==='en'?y.m:y.w);
+   const opts=shuffle([correct,...shuffle([...new Set(others)]).slice(0,3)]);
+   body='<div class="qtext">'+q+'</div><div class="options">'+opts.map((o,i)=>'<button class="option" onclick="answerMC(this,'+JSON.stringify(o)+','+JSON.stringify(correct)+','+JSON.stringify(type)+')">'+String.fromCharCode(65+i)+'　'+o+'</button>').join('')+'</div>';
+ }
+ quiz.innerHTML='<div class="card"><div class="qmeta">第 '+(qstate.i+1)+' / '+qstate.items.length+' 題 · '+({en:'英→中',zh:'中→英',cloze:'例句克漏',spell:'拼字'}[type])+'</div><div class="progress"><i style="width:'+pct+'%"></i></div>'+body+'<div id="feedbackBox"></div></div>';
+}
+function answerMC(btn,val,correct,type){
+ if(qstate.lock)return;qstate.lock=true;
+ document.querySelectorAll('.option').forEach(b=>{b.disabled=true;const text=b.textContent.slice(2).trim();if(text===correct)b.classList.add('correct');else if(b===btn)b.classList.add('wrong')});
+ finishAnswer(val===correct,type,correct);
+}
+function checkSpell(){if(qstate.lock)return;qstate.lock=true;const x=qstate.items[qstate.i],val=(spellInput.value||'').trim().toLowerCase();finishAnswer(val===x.w.toLowerCase(),'spell',x.w)}
+function finishAnswer(ok,type,correct){
+ const x=qstate.items[qstate.i];updateState(x,ok,type);if(ok)qstate.score++;save();renderStats();
+ feedbackBox.innerHTML='<div class="feedback"><b style="color:'+(ok?'#148557':'#b63b45')+'">'+(ok?'✓ 答對了！':'答錯了')+'</b><div style="margin-top:8px"><b>'+x.w+'</b>　'+x.p+'　'+x.m+'</div><div class="sub" style="margin-top:6px">'+x.e+'</div>'+masteryHTML(state(x.w).mastery)+'<button class="primary full" style="margin-top:14px" onclick="nextQuestion()">下一題</button></div>';
+}
+function nextQuestion(){qstate.i++;qstate.lock=false;if(qstate.i>=qstate.items.length){quiz.innerHTML='<div class="card" style="text-align:center"><div style="font-size:44px;font-weight:900">'+qstate.score+' / '+qstate.items.length+'</div><p class="sub">本次智慧測驗完成</p><button class="primary" onclick="startSmart()">再測一次</button></div>';renderAllExceptQuiz()}else renderQuestion()}
+function updateState(x,ok,type){
+ const s=state(x.w),now=Date.now();
+ s.last=now;
+ if(ok){s.ok++;s.types[type]=(s.types[type]||0)+1;s.mastery=Math.min(5,s.mastery+1);const days=[0,1,3,7,14,30][s.mastery];s.due=now+days*86400000}
+ else{s.bad++;s.types[type]=Math.max(-3,(s.types[type]||0)-1);s.mastery=Math.max(0,s.mastery-1);s.due=now+86400000}
+}
+
+function renderRecords(){
+ const a=pool();
+ records.innerHTML='<div class="card"><h2>學習紀錄</h2><input class="search" placeholder="搜尋單字…" oninput="searchText=this.value.toLowerCase();renderRecords()"><div class="list" style="margin-top:12px">'+
+ a.filter(x=>(x.w+' '+x.m).toLowerCase().includes(searchText)).sort((A,B)=>state(B.w).bad-state(A.w).bad||state(A.w).mastery-state(B.w).mastery).map(x=>{
+  const s=state(x.w);return '<div class="item"><div><b>'+x.w+'</b><small>'+x.m+'</small></div><div class="mini">熟練 '+s.mastery+'/5<br>答對 '+s.ok+'・答錯 '+s.bad+'</div></div>'
+ }).join('')+'</div></div>';
+}
+function renderAllExceptQuiz(){renderStats();renderToday();renderLearn();renderRecords()}
+function renderAll(){
+ trackTitle.textContent=TRACKS[track].title;trackDesc.textContent=TRACKS[track].desc;
+ renderStats();renderToday();renderLearn();renderQuizHome();renderRecords();
+}
+
+function startPlacement(){
+ showOnly('placementScreen');setNav('home');
+ let lo=1,hi=6,i=0,history=[];
+ function ask(){
+  if(i>=12){
+   const avg=history.reduce((s,x)=>s+x,0)/Math.max(1,history.length);
+   const rec=avg<2?'j2000':avg<4.5?'h4500':'h6000';
+   placeBar.style.width='100%';
+   placeBox.innerHTML='<div style="text-align:center;padding:15px 0"><h2>建議：'+TRACKS[rec].title+'</h2><p class="sub">這是功能版的粗略估計；正式程度測驗需要更大的校準題庫。</p><button class="primary" onclick="selectTrack(\''+rec+'\')">使用這個範圍</button></div>';
+   return;
+  }
+  const lv=Math.round((lo+hi)/2),cand=WORDS.filter(x=>x.lv===lv),x=cand[Math.floor(Math.random()*cand.length)]||WORDS[0];
+  const opts=shuffle([x.m,...shuffle(WORDS.filter(y=>y.w!==x.w).map(y=>y.m)).slice(0,3)]);
+  placeBar.style.width=Math.round(i/12*100)+'%';
+  placeBox.innerHTML='<div class="qmeta">第 '+(i+1)+' / 12 題 · Level '+lv+'</div><div class="qtext">「'+x.w+'」的意思是？</div><div class="options">'+opts.map((o,k)=>'<button class="option">'+String.fromCharCode(65+k)+'　'+o+'</button>').join('')+'</div>';
+  placeBox.querySelectorAll('.option').forEach(b=>b.onclick=()=>{const ok=b.textContent.slice(2).trim()===x.m;history.push(ok?lv:Math.max(1,lv-1));if(ok)lo=Math.min(6,lv+1);else hi=Math.max(1,lv-1);if(lo>hi){lo=Math.max(1,lv-1);hi=Math.min(6,lv+1)}i++;ask()});
+ }
+ ask();
+}
+function resetProgress(){if(confirm('確定要清除這台裝置上的學習紀錄？')){db={};save();if(track)renderAll();alert('已清除本機學習紀錄')}}
+if('serviceWorker'in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
+</script>
+</body></html>
